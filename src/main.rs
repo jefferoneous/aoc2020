@@ -1,6 +1,7 @@
 use clap::{App, Arg};
 
 mod day_one;
+mod day_two;
 
 const LAST_DAY_IMPLEMENTED: u8 = 1;
 
@@ -33,6 +34,13 @@ fn main() {
                 day_one::run(filename);
             } else {
                 println!("Day 1 requires an input file");
+            }
+        }
+        2 => {
+            if let Some(filename) = matches.value_of("filename") {
+                day_two::run(filename);
+            } else {
+                println!("Day 2 requires an input file");
             }
         }
 
