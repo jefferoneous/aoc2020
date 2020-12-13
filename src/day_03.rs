@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error as IoError};
+use std::path::PathBuf;
 
 fn count_trees(grid: &Vec<String>, h_delta: u8, v_delta: u8) -> usize {
     let mut h_pos = 0;
@@ -45,16 +46,16 @@ fn part_two(list: &Vec<String>) {
     println!("Trees encountered: {}", result);
 }
 
-fn load_list_from_file(filename: &str) -> Result<Vec<String>, IoError> {
-    let input = File::open(filename)?;
+fn load_list_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
+    let input = File::open(path)?;
     let buf = BufReader::new(input);
     let result = buf.lines().map(|l| l.unwrap()).collect();
 
     Ok(result)
 }
 
-pub fn run(filename: &str) {
-    match load_list_from_file(filename) {
+pub fn run(path: PathBuf) {
+    match load_list_from_file(path) {
         Ok(list) => {
             part_one(&list);
             part_two(&list);

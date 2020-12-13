@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error as IoError};
+use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -151,16 +152,16 @@ fn part_two(list: &Vec<String>) {
     println!("Valid passwords: {}", count);
 }
 
-fn load_list_from_file(filename: &str) -> Result<Vec<String>, IoError> {
-    let input = File::open(filename)?;
+fn load_list_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
+    let input = File::open(path)?;
     let buf = BufReader::new(input);
     let result = buf.lines().map(|l| l.unwrap()).collect();
 
     Ok(result)
 }
 
-pub fn run(filename: &str) {
-    match load_list_from_file(filename) {
+pub fn run(path: PathBuf) {
+    match load_list_from_file(path) {
         Ok(list) => {
             part_one(&list);
             part_two(&list);

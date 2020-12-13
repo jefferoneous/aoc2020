@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::{fs, io};
 
 fn find_pair(list: &[u32], sum: u32) -> Option<(u32, u32)> {
@@ -46,10 +47,10 @@ fn part_two(list: &[u32], sum: u32) {
     }
 }
 
-fn load_list_from_file(filename: &str) -> Result<Vec<u32>, io::Error> {
+fn load_list_from_file(path: PathBuf) -> Result<Vec<u32>, io::Error> {
     let mut result: Vec<u32> = vec![];
 
-    let contents = fs::read_to_string(filename)?;
+    let contents = fs::read_to_string(path)?;
 
     for line in contents.lines() {
         if let Ok(x) = line.parse() {
@@ -60,8 +61,8 @@ fn load_list_from_file(filename: &str) -> Result<Vec<u32>, io::Error> {
     Ok(result)
 }
 
-pub fn run(filename: &str) {
-    match load_list_from_file(filename) {
+pub fn run(path: PathBuf) {
+    match load_list_from_file(path) {
         Ok(list) => {
             part_one(&list, 2020);
             part_two(&list, 2020);

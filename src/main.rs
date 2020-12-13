@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::{App, Arg};
 
 mod day_01;
@@ -19,10 +21,10 @@ fn main() {
                 .required(true)
         )
         .arg(
-            Arg::with_name("filename")
-                .help("the path to a file used by the day")
-                .short("f")
-                .required(false)
+            Arg::with_name("input_dir")
+                .help("the path to the directory containing input files")
+                .short("d")
+                .required(true)
                 .takes_value(true)
         )
         .get_matches();
@@ -34,29 +36,14 @@ fn main() {
         return;
     }
 
-    match day {
-        1 => {
-            if let Some(filename) = matches.value_of("filename") {
-                day_01::run(filename);
-            } else {
-                println!("Day 1 requires an input file");
-            }
-        }
-        2 => {
-            if let Some(filename) = matches.value_of("filename") {
-                day_02::run(filename);
-            } else {
-                println!("Day 2 requires an input file");
-            }
-        }
-        3 => {
-            if let Some(filename) = matches.value_of("filename") {
-                day_03::run(filename);
-            } else {
-                println!("Day 3 requires an input file");
-            }
-        }
+    let input_dir = matches.value_of("input_dir").unwrap_or_default();
+    let mut path = PathBuf::from(input_dir);
+    path.push(format!("day_{:02}", day));
 
+    match day {
+        1 => day_01::run(path),
+        2 => day_02::run(path),
+        3 => day_03::run(path),
         _ => println!("Day \"{}\" is not implemented or is not valid", day),
     }
 }
