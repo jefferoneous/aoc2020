@@ -1,8 +1,8 @@
 use clap::{App, Arg};
 
-mod day_one;
-mod day_three;
-mod day_two;
+mod day_01;
+mod day_02;
+mod day_03;
 
 const LAST_DAY_IMPLEMENTED: u8 = 3;
 
