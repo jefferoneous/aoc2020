@@ -1,9 +1,10 @@
 use clap::{App, Arg};
 
 mod day_one;
+mod day_three;
 mod day_two;
 
-const LAST_DAY_IMPLEMENTED: u8 = 2;
+const LAST_DAY_IMPLEMENTED: u8 = 3;
 
 fn main() {
     let matches = App::new("Advent of Code 2020 Runner")
@@ -46,6 +47,13 @@ fn main() {
                 day_two::run(filename);
             } else {
                 println!("Day 2 requires an input file");
+            }
+        }
+        3 => {
+            if let Some(filename) = matches.value_of("filename") {
+                day_three::run(filename);
+            } else {
+                println!("Day 3 requires an input file");
             }
         }
 
