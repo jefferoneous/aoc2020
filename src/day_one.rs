@@ -66,7 +66,7 @@ pub fn run(filename: &str) {
             part_one(&list, 2020);
             part_two(&list, 2020);
         }
-        Err(e) => println!("Error occurred while reading input file: {}", e),
+        Err(e) => eprintln!("Error occurred while reading input file: {}", e),
     }
 }
 

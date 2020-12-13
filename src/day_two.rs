@@ -1,10 +1,9 @@
-use io::BufReader;
-use std::{
-    fs::File,
-    io::{self, BufRead},
-    str::FromStr,
-};
+use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::fs::File;
+use std::io::{BufRead, BufReader, Error as IoError};
+use std::str::FromStr;
 
+#[derive(Debug)]
 struct PasswordSpec {
     min_count: u8,
     max_count: u8,
@@ -12,16 +11,58 @@ struct PasswordSpec {
     password: String,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+enum ParseError {
+    InvalidSyntax,
+    MinCountTooLow,
+    MaxCountLowerThanMinCount,
+    MissingRequiredCharacterSpec,
+}
+
+impl Display for ParseError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        write!(
+            f,
+            "{}",
+            match self {
+                ParseError::InvalidSyntax => "Specification doesn't follow syntax",
+                ParseError::MinCountTooLow => "Minimum count can't be less than 1",
+                ParseError::MaxCountLowerThanMinCount =>
+                    "Maximum count can't be less than minimum count",
+                ParseError::MissingRequiredCharacterSpec =>
+                    "Required character specification is missing",
+            }
+        )
+    }
+}
+
 impl FromStr for PasswordSpec {
-    type Err = ();
+    type Err = ParseError;
 
     fn from_str(spec: &str) -> Result<Self, Self::Err> {
         let parts: Vec<&str> = spec.split(|c| "- :".contains(c)).collect();
-        let min_count = parts[0].parse().unwrap_or(1);
-        let max_count = parts[1].parse().unwrap_or(u8::MAX);
-        let character = parts[2].chars().next().unwrap_or('\x1B');
+
+        if parts.len() != 5 {
+            return Err(ParseError::InvalidSyntax);
+        }
+
+        let min_count = parts[0].parse().unwrap_or_default();
+        let max_count = parts[1].parse().unwrap_or_default();
+        let character = parts[2].chars().next().unwrap_or_default();
         // note we skip index 3 because it should be an empty string
         let password = parts[4].into();
+
+        if min_count < 1 {
+            return Err(ParseError::MinCountTooLow);
+        }
+
+        if max_count < min_count {
+            return Err(ParseError::MaxCountLowerThanMinCount);
+        }
+
+        if character == char::default() {
+            return Err(ParseError::MissingRequiredCharacterSpec);
+        }
 
         Ok(Self {
             min_count,
@@ -44,16 +85,20 @@ impl PasswordSpec {
 }
 
 fn count_invalid_passwords(list: &Vec<String>) -> usize {
-    let mut result = 0;
+    let mut count = 0;
 
     for item in list {
-        let spec: PasswordSpec = item.parse().unwrap();
-        if spec.has_valid_password() {
-            result += 1;
+        match item.parse::<PasswordSpec>() {
+            Ok(spec) => {
+                if spec.has_valid_password() {
+                    count += 1;
+                }
+            }
+            Err(e) => eprintln!("Could not parse \"{}\": {}", item, e),
         }
     }
 
-    result
+    count
 }
 
 fn part_one(list: &Vec<String>) {
@@ -71,7 +116,7 @@ fn part_one(list: &Vec<String>) {
 //     }
 // }
 
-fn load_list_from_file(filename: &str) -> Result<Vec<String>, io::Error> {
+fn load_list_from_file(filename: &str) -> Result<Vec<String>, IoError> {
     let input = File::open(filename)?;
     let buf = BufReader::new(input);
     let result = buf.lines().map(|l| l.unwrap()).collect();
@@ -85,7 +130,7 @@ pub fn run(filename: &str) {
             part_one(&list);
             // part_two(&list, 2020);
         }
-        Err(e) => println!("Error occurred while reading input file: {}", e),
+        Err(e) => eprintln!("Error occurred while reading input file: {}", e),
     }
 }
 
@@ -94,8 +139,8 @@ mod test {
     use super::*;
 
     #[test]
-    fn parses_spec() {
-        let spec = PasswordSpec::from_str("1-3 a: abcde").unwrap();
+    fn parses_valid_spec() {
+        let spec: PasswordSpec = "1-3 a: abcde".parse().unwrap();
 
         assert_eq!(spec.min_count, 1);
         assert_eq!(spec.max_count, 3);
@@ -104,15 +149,43 @@ mod test {
     }
 
     #[test]
+    fn cannot_parse_spec_out_of_syntax() {
+        let result = "0-: abcde".parse::<PasswordSpec>().err();
+
+        assert_eq!(result, Some(ParseError::InvalidSyntax));
+    }
+
+    #[test]
+    fn cannot_parse_spec_with_min_less_than_one() {
+        let result = "0-4 a: abcde".parse::<PasswordSpec>().err();
+
+        assert_eq!(result, Some(ParseError::MinCountTooLow));
+    }
+
+    #[test]
+    fn cannot_parse_spec_with_max_less_than_min() {
+        let result = "4-1 a: abcde".parse::<PasswordSpec>().err();
+
+        assert_eq!(result, Some(ParseError::MaxCountLowerThanMinCount));
+    }
+
+    #[test]
+    fn cannot_parse_spec_with_missing_required_char() {
+        let result = "1-3 : abcde".parse::<PasswordSpec>().err();
+
+        assert_eq!(result, Some(ParseError::MissingRequiredCharacterSpec));
+    }
+
+    #[test]
     fn identifies_valid_password() {
-        let spec = PasswordSpec::from_str("1-3 a: abcde").unwrap();
+        let spec: PasswordSpec = "1-3 a: abcde".parse().unwrap();
 
         assert!(spec.has_valid_password());
     }
 
     #[test]
     fn identifies_invalid_password() {
-        let spec = PasswordSpec::from_str("1-3 b: cdefg").unwrap();
+        let spec: PasswordSpec = "1-3 b: cdefg".parse().unwrap();
 
         assert_eq!(false, spec.has_valid_password());
     }

@@ -3,7 +3,7 @@ use clap::{App, Arg};
 mod day_one;
 mod day_two;
 
-const LAST_DAY_IMPLEMENTED: u8 = 1;
+const LAST_DAY_IMPLEMENTED: u8 = 2;
 
 fn main() {
     let matches = App::new("Advent of Code 2020 Runner")
@@ -27,6 +27,11 @@ fn main() {
         .get_matches();
 
     let day: u8 = matches.value_of("day").unwrap_or("1").parse().unwrap_or(1);
+
+    if day > LAST_DAY_IMPLEMENTED {
+        eprintln!("Day must be between 1 and {}", LAST_DAY_IMPLEMENTED);
+        return;
+    }
 
     match day {
         1 => {
