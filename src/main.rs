@@ -37,21 +37,21 @@ fn main() {
     match day {
         1 => {
             if let Some(filename) = matches.value_of("filename") {
-                day_one::run(filename);
+                day_01::run(filename);
             } else {
                 println!("Day 1 requires an input file");
             }
         }
         2 => {
             if let Some(filename) = matches.value_of("filename") {
-                day_two::run(filename);
+                day_02::run(filename);
             } else {
                 println!("Day 2 requires an input file");
             }
         }
         3 => {
             if let Some(filename) = matches.value_of("filename") {
-                day_three::run(filename);
+                day_03::run(filename);
             } else {
                 println!("Day 3 requires an input file");
             }
