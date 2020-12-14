@@ -1,7 +1,4 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
-use std::fs::File;
-use std::io::{BufRead, BufReader, Error as IoError};
-use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -106,7 +103,7 @@ impl PasswordSpec {
     }
 }
 
-fn count_invalid_passwords_sled_style(list: &Vec<String>) -> usize {
+fn count_invalid_passwords_sled_style(list: &[String]) -> usize {
     let mut count = 0;
 
     for item in list {
@@ -123,7 +120,7 @@ fn count_invalid_passwords_sled_style(list: &Vec<String>) -> usize {
     count
 }
 
-fn count_invalid_passwords_toboggan_style(list: &Vec<String>) -> usize {
+fn count_invalid_passwords_toboggan_style(list: &[String]) -> usize {
     let mut count = 0;
 
     for item in list {
@@ -140,34 +137,14 @@ fn count_invalid_passwords_toboggan_style(list: &Vec<String>) -> usize {
     count
 }
 
-fn part_one(list: &Vec<String>) {
-    println!("Part One\n========");
-    let count = count_invalid_passwords_sled_style(list);
+pub fn part_one(data: &[String]) {
+    let count = count_invalid_passwords_sled_style(data);
     println!("Valid passwords: {}", count);
 }
 
-fn part_two(list: &Vec<String>) {
-    println!("Part Two\n========");
-    let count = count_invalid_passwords_toboggan_style(list);
+pub fn part_two(data: &[String]) {
+    let count = count_invalid_passwords_toboggan_style(data);
     println!("Valid passwords: {}", count);
-}
-
-fn load_list_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
-    let input = File::open(path)?;
-    let buf = BufReader::new(input);
-    let result = buf.lines().map(|l| l.unwrap()).collect();
-
-    Ok(result)
-}
-
-pub fn run(path: PathBuf) {
-    match load_list_from_file(path) {
-        Ok(list) => {
-            part_one(&list);
-            part_two(&list);
-        }
-        Err(e) => eprintln!("Error occurred while reading input file: {}", e),
-    }
 }
 
 #[cfg(test)]

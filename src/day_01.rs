@@ -1,5 +1,4 @@
-use std::path::PathBuf;
-use std::{fs, io};
+const SUM: u32 = 2020;
 
 fn find_pair(list: &[u32], sum: u32) -> Option<(u32, u32)> {
     for x in list {
@@ -29,45 +28,33 @@ fn find_triple(list: &[u32], sum: u32) -> Option<(u32, u32, u32)> {
     None
 }
 
-fn part_one(list: &[u32], sum: u32) {
-    println!("Part One\n========");
-    if let Some((a, b)) = find_pair(list, sum) {
+fn convert_strings_to_numbers(contents: &[String]) -> Vec<u32> {
+    let mut result: Vec<u32> = vec![];
+
+    for line in contents {
+        if let Ok(x) = line.parse() {
+            result.push(x);
+        }
+    }
+
+    result
+}
+
+pub fn part_one(data: &[String]) {
+    let list = convert_strings_to_numbers(data);
+    if let Some((a, b)) = find_pair(&list, SUM) {
         println!("a: {}, b: {}, a*b: {}", a, b, a * b);
     } else {
         println!("No solution found for part one");
     }
 }
 
-fn part_two(list: &[u32], sum: u32) {
-    println!("Part Two\n========");
-    if let Some((a, b, c)) = find_triple(list, sum) {
+pub fn part_two(data: &[String]) {
+    let list = convert_strings_to_numbers(data);
+    if let Some((a, b, c)) = find_triple(&list, SUM) {
         println!("a: {}, b: {}, c: {}, a*b*c: {}", a, b, c, a * b * c);
     } else {
         println!("No solution found for part two");
-    }
-}
-
-fn load_list_from_file(path: PathBuf) -> Result<Vec<u32>, io::Error> {
-    let mut result: Vec<u32> = vec![];
-
-    let contents = fs::read_to_string(path)?;
-
-    for line in contents.lines() {
-        if let Ok(x) = line.parse() {
-            result.push(x);
-        }
-    }
-
-    Ok(result)
-}
-
-pub fn run(path: PathBuf) {
-    match load_list_from_file(path) {
-        Ok(list) => {
-            part_one(&list, 2020);
-            part_two(&list, 2020);
-        }
-        Err(e) => eprintln!("Error occurred while reading input file: {}", e),
     }
 }
 

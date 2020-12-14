@@ -1,3 +1,6 @@
+use std::error::Error;
+use std::fs::File;
+use std::io::{BufRead, BufReader, Error as IoError};
 use std::path::PathBuf;
 
 use clap::{App, Arg};
@@ -8,42 +11,65 @@ mod day_03;
 
 const LAST_DAY_IMPLEMENTED: u8 = 3;
 
-fn main() {
+fn load_data_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
+    let file = File::open(path)?;
+    let buf = BufReader::new(file);
+    let result = buf.lines().map(|l| l.unwrap_or_default()).collect();
+
+    Ok(result)
+}
+
+fn day_is_in_range(value: String) -> Result<(), String> {
+    match value.parse::<u8>() {
+        Ok(day) => {
+            if day >= 1 && day <= LAST_DAY_IMPLEMENTED {
+                Ok(())
+            } else {
+                Err(format!(
+                    "Day must be between 1 and {}",
+                    LAST_DAY_IMPLEMENTED
+                ))
+            }
+        }
+        Err(_) => Err(String::from("Not a number")),
+    }
+}
+
+fn run(part_one: fn(&[String]), part_two: fn(&[String]), data: &[String]) {
+    println!("Part One\n========");
+    part_one(&data);
+    println!("\nPart Two\n========");
+    part_two(&data);
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
     let matches = App::new("Advent of Code 2020 Runner")
         .version("0.1.0")
         .author("Jeff Mattfield")
         .about("Runs solutions to the problems posed during the Advent of Code 2020 (https://adventofcode.com/2020)")
-        .after_help(&*format!("Implemented days: 1-{}", LAST_DAY_IMPLEMENTED))
         .arg(
             Arg::with_name("day")
-                .help("the day of the month")
+                .help(&*format!("the day of the month (1-{})", LAST_DAY_IMPLEMENTED))
                 .index(1)
-                .required(true)
-        )
-        .arg(
-            Arg::with_name("input_dir")
-                .help("the path to the directory containing input files")
-                .short("d")
-                .required(true)
-                .takes_value(true)
+                .validator(day_is_in_range)
+                .required(false)
         )
         .get_matches();
 
     let day: u8 = matches.value_of("day").unwrap_or("1").parse().unwrap_or(1);
 
-    if day > LAST_DAY_IMPLEMENTED {
-        eprintln!("Day must be between 1 and {}", LAST_DAY_IMPLEMENTED);
-        return;
-    }
+    let path: PathBuf = ["input", format!("day_{:02}", day).as_ref()]
+        .iter()
+        .collect();
 
-    let input_dir = matches.value_of("input_dir").unwrap_or_default();
-    let mut path = PathBuf::from(input_dir);
-    path.push(format!("day_{:02}", day));
+    let data = load_data_from_file(path)?;
 
     match day {
-        1 => day_01::run(path),
-        2 => day_02::run(path),
-        3 => day_03::run(path),
+        1 => run(day_01::part_one, day_01::part_two, &data),
+        2 => run(day_02::part_one, day_02::part_two, &data),
+        3 => run(day_03::part_one, day_03::part_two, &data),
         _ => println!("Day \"{}\" is not implemented or is not valid", day),
-    }
+    };
+
+    Ok(())
 }
