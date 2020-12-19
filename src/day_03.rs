@@ -61,7 +61,7 @@ mod test {
     }
 
     #[test]
-    fn counts_correct_number_of_trees() {
+    fn day_03_counts_correct_number_of_trees() {
         let grid = test_data();
 
         let count = count_trees(&grid, 3, 1);

@@ -152,7 +152,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn parses_valid_spec() {
+    fn day_02_parses_valid_spec() {
         let spec: PasswordSpec = "1-3 a: abcde".parse().unwrap();
 
         assert_eq!(spec.a, 1);
@@ -162,63 +162,63 @@ mod test {
     }
 
     #[test]
-    fn cannot_parse_spec_out_of_syntax() {
+    fn day_02_cannot_parse_spec_out_of_syntax() {
         let result = "0-: abcde".parse::<PasswordSpec>().err();
 
         assert_eq!(result, Some(ParseError::InvalidSyntax));
     }
 
     #[test]
-    fn cannot_parse_spec_with_min_less_than_one() {
+    fn day_02_cannot_parse_spec_with_min_less_than_one() {
         let result = "0-4 a: abcde".parse::<PasswordSpec>().err();
 
         assert_eq!(result, Some(ParseError::ATooLow));
     }
 
     #[test]
-    fn cannot_parse_spec_with_max_less_than_min() {
+    fn day_02_cannot_parse_spec_with_max_less_than_min() {
         let result = "4-1 a: abcde".parse::<PasswordSpec>().err();
 
         assert_eq!(result, Some(ParseError::BLowerThanA));
     }
 
     #[test]
-    fn cannot_parse_spec_with_missing_required_char() {
+    fn day_02_cannot_parse_spec_with_missing_required_char() {
         let result = "1-3 : abcde".parse::<PasswordSpec>().err();
 
         assert_eq!(result, Some(ParseError::MissingRequiredCharacterSpec));
     }
 
     #[test]
-    fn identifies_valid_sled_password() {
+    fn day_02_identifies_valid_sled_password() {
         let spec: PasswordSpec = "1-3 a: abcde".parse().unwrap();
 
         assert!(spec.has_valid_sled_password());
     }
 
     #[test]
-    fn identifies_invalid_sled_password() {
+    fn day_02_identifies_invalid_sled_password() {
         let spec: PasswordSpec = "1-3 b: cdefg".parse().unwrap();
 
         assert_eq!(false, spec.has_valid_sled_password());
     }
 
     #[test]
-    fn identifies_valid_toboggan_password() {
+    fn day_02_identifies_valid_toboggan_password() {
         let spec: PasswordSpec = "1-3 a: abcde".parse().unwrap();
 
         assert!(spec.has_valid_toboggan_password());
     }
 
     #[test]
-    fn identifies_invalid_toboggan_password_with_missing_char() {
+    fn day_02_identifies_invalid_toboggan_password_with_missing_char() {
         let spec: PasswordSpec = "1-3 b: cdefg".parse().unwrap();
 
         assert_eq!(false, spec.has_valid_toboggan_password());
     }
 
     #[test]
-    fn identifies_invalid_toboggan_password_with_repeat_char() {
+    fn day_02_identifies_invalid_toboggan_password_with_repeat_char() {
         let spec: PasswordSpec = "2-9 c: ccccccccc".parse().unwrap();
 
         assert_eq!(false, spec.has_valid_toboggan_password());

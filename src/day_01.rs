@@ -63,7 +63,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_finds_correct_pair() {
+    fn day_01_test_finds_correct_pair() {
         let list = vec![1721, 979, 366, 299, 675, 1456];
         let result = find_pair(&list, 2020);
 
@@ -71,7 +71,7 @@ mod test {
     }
 
     #[test]
-    fn test_finds_correct_triple() {
+    fn day_01_test_finds_correct_triple() {
         let list = vec![1721, 979, 366, 299, 675, 1456];
         let result = find_triple(&list, 2020);
 
