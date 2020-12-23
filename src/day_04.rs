@@ -417,7 +417,7 @@ mod test {
             "iyr:2011 ecl:brn hgt:59in".to_string(),
         ];
 
-        let passports = parse_input_lines(&sample_lines)?;
+        parse_input_lines(&sample_lines)?;
 
         Ok(())
     }
