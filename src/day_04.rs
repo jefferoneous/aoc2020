@@ -41,10 +41,10 @@ impl Passport {
         self.has_valid_birth_year()
             && self.has_valid_issue_year()
             && self.has_valid_expiration_year()
-            && self.height.is_some()
-            && self.hair_color.is_some()
-            && self.eye_color.is_some()
-            && self.passport_id.is_some()
+            && self.has_valid_height()
+            && self.has_valid_hair_color()
+            && self.has_valid_eye_color()
+            && self.has_valid_passport_id()
     }
 
     fn has_valid_birth_year(&self) -> bool {
@@ -70,6 +70,61 @@ impl Passport {
             if let Ok(year) = year.parse::<u32>() {
                 return year >= 2020 && year <= 2030;
             }
+        }
+        false
+    }
+
+    fn has_valid_height(&self) -> bool {
+        if let Some(height) = &self.height {
+            let units = if height.contains("cm") {
+                Some("cm")
+            } else if height.contains("in") {
+                Some("in")
+            } else {
+                return false;
+            };
+
+            if let Ok(ht) = height
+                .chars()
+                .take_while(|c| c.is_numeric())
+                .collect::<String>()
+                .parse::<u32>()
+            {
+                match units {
+                    Some("cm") => return ht >= 150 && ht <= 193,
+                    Some("in") => return ht >= 59 && ht <= 76,
+                    _ => return false,
+                }
+            }
+        }
+
+        false
+    }
+
+    fn has_valid_hair_color(&self) -> bool {
+        if let Some(hair_color) = &self.hair_color {
+            return hair_color.starts_with("#")
+                && hair_color
+                    .to_lowercase()
+                    .chars()
+                    .all(|c| "#abcdef0123456789".contains(c));
+        }
+        false
+    }
+
+    fn has_valid_eye_color(&self) -> bool {
+        if let Some(eye_color) = &self.eye_color {
+            let valid_colors = vec!["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+
+            return valid_colors.contains(&eye_color.as_ref());
+        }
+
+        false
+    }
+
+    fn has_valid_passport_id(&self) -> bool {
+        if let Some(passport_id) = &self.passport_id {
+            return passport_id.len() == 9 && passport_id.chars().all(|c| c.is_numeric());
         }
         false
     }
@@ -143,17 +198,17 @@ fn parse_input_lines(lines: &[String]) -> Result<Vec<Passport>, ParseError> {
     Ok(result)
 }
 
-fn count_passwords_with_all_required_values(passports: &[Passport]) -> usize {
+fn count_passports_with_all_required_values(passports: &[Passport]) -> usize {
     passports.iter().filter(|p| p.has_required_values()).count()
 }
 
-fn count_passwords_with_valid_values(passports: &[Passport]) -> usize {
+fn count_passports_with_valid_values(passports: &[Passport]) -> usize {
     passports.iter().filter(|p| p.has_valid_values()).count()
 }
 
 pub fn part_one(data: &[String]) {
     if let Ok(passports) = parse_input_lines(data) {
-        let count = count_passwords_with_all_required_values(&passports);
+        let count = count_passports_with_all_required_values(&passports);
         println!("Valid passports: {}", count);
     } else {
         println!("No passports found");
@@ -162,7 +217,7 @@ pub fn part_one(data: &[String]) {
 
 pub fn part_two(data: &[String]) {
     if let Ok(passports) = parse_input_lines(data) {
-        let count = count_passwords_with_valid_values(&passports);
+        let count = count_passports_with_valid_values(&passports);
         println!("Valid passports: {}", count);
     } else {
         println!("No passports found");
@@ -233,6 +288,66 @@ mod test {
     }
 
     #[test]
+    fn day_04_identifies_valid_birth_year() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:183cm".to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_birth_year());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_identifies_valid_issue_year() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:183cm".to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_issue_year());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_identifies_valid_expiration_year() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:183cm".to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_expiration_year());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_identifies_valid_height_in_cm() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:183cm".to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_height());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_parses_valid_height_in_inches() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:71in".to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_height());
+
+        Ok(())
+    }
+
+    #[test]
     fn day_04_identifies_passport_without_country_id_as_having_all_required_values(
     ) -> Result<(), ParseError> {
         let sample_data =
@@ -241,6 +356,45 @@ mod test {
         let passport = sample_data.parse::<Passport>()?;
 
         assert!(passport.has_required_values());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_identifies_valid_hair_color() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:71in hcl:#ae17e1"
+                .to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_hair_color());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_identifies_valid_eye_color() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:71in hcl:#ae17e1"
+                .to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_eye_color());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_04_identifies_valid_passport_id() -> Result<(), ParseError> {
+        let sample_data =
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 hgt:71in hcl:#ae17e1"
+                .to_string();
+
+        let passport = sample_data.parse::<Passport>()?;
+
+        assert!(passport.has_valid_passport_id());
 
         Ok(())
     }
@@ -287,7 +441,7 @@ mod test {
         ];
 
         let passports = parse_input_lines(&sample_lines)?;
-        let count = count_passwords_with_all_required_values(&passports);
+        let count = count_passports_with_all_required_values(&passports);
 
         assert_eq!(count, 2);
 
@@ -313,7 +467,7 @@ mod test {
         ];
 
         let passports = parse_input_lines(&sample_lines)?;
-        let count = count_passwords_with_valid_values(&passports);
+        let count = count_passports_with_valid_values(&passports);
 
         assert_eq!(count, 2);
 
