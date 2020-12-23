@@ -31,7 +31,7 @@ fn parse_seat_spec(spec: &str) -> u32 {
     row_start * 8 + column_start
 }
 
-pub fn calculate_highest_seat_id(data: &[String]) -> u32 {
+fn calculate_highest_seat_id(data: &[String]) -> u32 {
     data.iter().fold(0u32, |id, seat_spec| {
         let seat_id = parse_seat_spec(seat_spec);
         if seat_id > id {
@@ -42,18 +42,35 @@ pub fn calculate_highest_seat_id(data: &[String]) -> u32 {
     })
 }
 
+fn find_missing_seat_id(data: &[String]) -> u32 {
+    let mut ids: Vec<u32> = data.iter().map(|spec| parse_seat_spec(&spec)).collect();
+    ids.sort();
+
+    let mut previous_id = 0;
+
+    ids.iter()
+        .find_map(|current_id| {
+            if previous_id == 0 {
+                previous_id = *current_id;
+                None
+            } else if *current_id - previous_id == 2 {
+                Some(current_id - 1)
+            } else {
+                previous_id = *current_id;
+                None
+            }
+        })
+        .unwrap_or_default()
+}
+
 pub fn part_one(data: &[String]) {
     let id = calculate_highest_seat_id(data);
     println!("Highest seat ID: {}", id);
 }
 
 pub fn part_two(data: &[String]) {
-    //     if let Ok(passports) = parse_input_lines(data) {
-    //         let count = count_passports_with_valid_values(&passports);
-    //         println!("Valid passports: {}", count);
-    //     } else {
-    //         println!("No passports found");
-    //     }
+    let id = find_missing_seat_id(data);
+    println!("Missing seat ID: {}", id);
 }
 
 #[cfg(test)]
