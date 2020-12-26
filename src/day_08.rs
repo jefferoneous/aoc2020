@@ -88,7 +88,9 @@ impl Processor {
         Ok(())
     }
 
-    fn run(&mut self) -> i32 {
+    fn run(&mut self) -> (bool, i32) {
+        let mut encountered_infinite_loop = false;
+
         loop {
             self.addresses_visited.insert(self.instruction_pointer);
 
@@ -106,31 +108,62 @@ impl Processor {
                         self.instruction_pointer = new_ptr as usize;
                     }
                 }
-                None => {}
+                None => break,
             }
 
             if self.addresses_visited.contains(&self.instruction_pointer) {
+                encountered_infinite_loop = true;
                 break;
             }
         }
 
-        self.accumulator
+        (encountered_infinite_loop, self.accumulator)
     }
 }
 
 pub fn part_one(data: &[String]) {
     let mut processor = Processor::new();
     if let Ok(()) = processor.load(data) {
-        let result = processor.run();
-        println!("Accumulator: {}", result);
+        let (encountered_loop, result) = processor.run();
+        println!(
+            "Encountered infinite loop: {}\nAccumulator: {}",
+            encountered_loop, result
+        );
     } else {
         println!("Loading instructions failed");
     }
 }
 
-pub fn part_two(_data: &[String]) {
-    // let count = count_invalid_passwords_toboggan_style(data);
-    // println!("Valid passwords: {}", count);
+pub fn part_two(data: &[String]) {
+    for index in 0..data.len() {
+        let new_data: Vec<String> = data
+            .iter()
+            .enumerate()
+            .map(|(i, line)| {
+                if i == index {
+                    if line.contains("nop") {
+                        line.replace("nop", "jmp")
+                    } else if line.contains("jmp") {
+                        line.replace("jmp", "nop")
+                    } else {
+                        line.clone()
+                    }
+                } else {
+                    line.clone()
+                }
+            })
+            .collect();
+
+        let mut processor = Processor::new();
+        if let Ok(()) = processor.load(&new_data) {
+            let (encountered_loop, result) = processor.run();
+            if !encountered_loop {
+                println!("Accumulator: {}", result);
+            }
+        } else {
+            println!("Loading instructions failed");
+        }
+    }
 }
 
 #[cfg(test)]
@@ -185,7 +218,7 @@ mod test {
         let mut processor = Processor::new();
         processor.load(&sample_instructions)?;
 
-        assert_eq!(processor.run(), 5);
+        assert_eq!(processor.run(), (true, 5));
 
         Ok(())
     }
