@@ -15,8 +15,9 @@ mod day_04;
 mod day_05;
 mod day_06;
 mod day_07;
+mod day_08;
 
-const LAST_DAY_IMPLEMENTED: u8 = 7;
+const LAST_DAY_IMPLEMENTED: u8 = 8;
 
 fn load_data_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
     let contents = fs::read_to_string(path)?;
@@ -78,6 +79,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         5 => run(day_05::part_one, day_05::part_two, &data),
         6 => run(day_06::part_one, day_06::part_two, &data),
         7 => run(day_07::part_one, day_07::part_two, &data),
+        8 => run(day_08::part_one, day_08::part_two, &data),
         _ => println!("Day \"{}\" is not implemented or is not valid", day),
     };
 
