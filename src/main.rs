@@ -10,8 +10,9 @@ mod day_02;
 mod day_03;
 mod day_04;
 mod day_05;
+mod day_06;
 
-const LAST_DAY_IMPLEMENTED: u8 = 5;
+const LAST_DAY_IMPLEMENTED: u8 = 6;
 
 fn load_data_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
     let contents = fs::read_to_string(path)?;
@@ -44,7 +45,7 @@ fn run(part_one: fn(&[String]), part_two: fn(&[String]), data: &[String]) {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let matches = App::new("Advent of Code 2020 Runner")
+    let matches = App::new("Advent of Code 2020 Solution Runner")
         .version("0.1.0")
         .author("Jeff Mattfield")
         .about("Runs solutions to the problems posed during the Advent of Code 2020 (https://adventofcode.com/2020)")
@@ -71,6 +72,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         3 => run(day_03::part_one, day_03::part_two, &data),
         4 => run(day_04::part_one, day_04::part_two, &data),
         5 => run(day_05::part_one, day_05::part_two, &data),
+        6 => run(day_06::part_one, day_06::part_two, &data),
         _ => println!("Day \"{}\" is not implemented or is not valid", day),
     };
 
