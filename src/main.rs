@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 use std::error::Error;
 use std::fs;
 use std::io::Error as IoError;
@@ -11,8 +14,9 @@ mod day_03;
 mod day_04;
 mod day_05;
 mod day_06;
+mod day_07;
 
-const LAST_DAY_IMPLEMENTED: u8 = 6;
+const LAST_DAY_IMPLEMENTED: u8 = 7;
 
 fn load_data_from_file(path: PathBuf) -> Result<Vec<String>, IoError> {
     let contents = fs::read_to_string(path)?;
@@ -73,6 +77,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         4 => run(day_04::part_one, day_04::part_two, &data),
         5 => run(day_05::part_one, day_05::part_two, &data),
         6 => run(day_06::part_one, day_06::part_two, &data),
+        7 => run(day_07::part_one, day_07::part_two, &data),
         _ => println!("Day \"{}\" is not implemented or is not valid", day),
     };
 
