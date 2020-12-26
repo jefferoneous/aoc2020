@@ -26,12 +26,6 @@ impl Display for ParseError {
     }
 }
 
-impl std::error::Error for ParseError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        None
-    }
-}
-
 impl FromStr for Instruction {
     type Err = ParseError;
 
@@ -144,7 +138,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn day_08_parses_nop() -> Result<(), Box<dyn std::error::Error>> {
+    fn day_08_parses_nop() -> Result<(), ParseError> {
         let instruction: Instruction = "nop +0".parse()?;
 
         assert_eq!(instruction, Instruction::Nop(0));
@@ -153,7 +147,7 @@ mod test {
     }
 
     #[test]
-    fn day_08_parses_acc() -> Result<(), Box<dyn std::error::Error>> {
+    fn day_08_parses_acc() -> Result<(), ParseError> {
         let instruction: Instruction = "acc +1".parse()?;
 
         assert_eq!(instruction, Instruction::Acc(1));
@@ -162,7 +156,7 @@ mod test {
     }
 
     #[test]
-    fn day_08_parses_jmp() -> Result<(), Box<dyn std::error::Error>> {
+    fn day_08_parses_jmp() -> Result<(), ParseError> {
         let instruction: Instruction = "jmp +3".parse()?;
 
         assert_eq!(instruction, Instruction::Jmp(3));
