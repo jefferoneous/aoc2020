@@ -19,8 +19,9 @@ fn part_one(data: &[String]) {
 }
 
 fn parse_into_grid(data: &[String]) -> Floor {
-    let columns = "LLLLLL.LLLLLL.LLLLL.LLLLLLLLLLLLLLL.LLLLLLL.LLLLL.L.LLLLLLL.LLLLLLLLLLLLLL.LLL.L.L.LLLLLLLLL.LLLLL".len() as u32;
-    let rows = 97;
+    let columns = data[0].len() as u32;
+    let rows = data.len() as u32;
+
     Floor::with_cells(
         rows,
         columns,
