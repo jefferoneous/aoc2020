@@ -1,3 +1,6 @@
+mod util;
+pub use util::grid;
+
 mod day_01;
 mod day_02;
 mod day_03;
@@ -8,6 +11,7 @@ mod day_07;
 mod day_08;
 mod day_09;
 mod day_10;
+mod day_11;
 
 fn builders() -> Vec<fn(Vec<String>) -> DayRunner> {
     vec![
@@ -21,6 +25,7 @@ fn builders() -> Vec<fn(Vec<String>) -> DayRunner> {
         day_08::runner,
         day_09::runner,
         day_10::runner,
+        day_11::runner,
     ]
 }
 
