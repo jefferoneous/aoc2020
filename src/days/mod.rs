@@ -12,6 +12,7 @@ mod day_08;
 mod day_09;
 mod day_10;
 mod day_11;
+mod day_12;
 
 fn builders() -> Vec<fn(Vec<String>) -> DayRunner> {
     vec![
@@ -26,6 +27,7 @@ fn builders() -> Vec<fn(Vec<String>) -> DayRunner> {
         day_09::runner,
         day_10::runner,
         day_11::runner,
+        day_12::runner,
     ]
 }
 
