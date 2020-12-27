@@ -22,7 +22,7 @@ fn parse_into_grid(data: &[String]) -> Floor {
     let columns = data[0].len() as u32;
     let rows = data.len() as u32;
 
-    Floor::with_cells(
+    Floor::new(
         rows,
         columns,
         data.iter().map(|s| s.chars()).flatten().collect(),
@@ -87,25 +87,25 @@ mod test {
 
     #[test]
     fn day_11_counts_occupied_neighbors() {
-        let grid = Grid::with_cells(3, 3, "LL#..###L".chars().collect()).unwrap();
+        let grid = Grid::new(3, 3, "LL#..###L".chars().collect()).unwrap();
 
         assert_eq!(4, count_occupied_neighbors(&grid, 1, 1));
     }
 
     #[test]
     fn day_11_counts_all_occupied_seats() {
-        let grid = Grid::with_cells(4, 4, "LL#..###LLL..###".chars().collect()).unwrap();
+        let grid = Grid::new(4, 4, "LL#..###LLL..###".chars().collect()).unwrap();
 
         assert_eq!(7, count_occupied_seats(&grid));
     }
 
     #[test]
     fn day_11_fills_all_seats_from_start() {
-        let mut grid: Floor = Grid::with_cells(
+        let mut grid: Floor = Grid::new(
             10,
             10,
             "L.LL.LL.LLLLLLLLL.LLL.L.L..L..LLLL.LL.LLL.LL.LL.LLL.LLLLL.LL..L.L.....LLLLLLLLLLL.LLLLLL.LL.LLLLL.LL".chars().collect()).unwrap();
-        let expected: Floor = Grid::with_cells(
+        let expected: Floor = Grid::new(
             10,
             10,
             "#.##.##.#########.###.#.#..#..####.##.###.##.##.###.#####.##..#.#.....###########.######.##.#####.##".chars().collect()).unwrap();
@@ -118,11 +118,11 @@ mod test {
 
     #[test]
     fn day_11_correctly_updates_second_round() {
-        let mut grid: Floor = Grid::with_cells(
+        let mut grid: Floor = Grid::new(
             10,
             10,
             "#.##.##.#########.###.#.#..#..####.##.###.##.##.###.#####.##..#.#.....###########.######.##.#####.##".chars().collect()).unwrap();
-        let expected: Floor = Grid::with_cells(
+        let expected: Floor = Grid::new(
             10,
             10,
             "#.LL.L#.###LLLLLL.L#L.L.L..L..#LLL.LL.L##.LL.LL.LL#.LLLL#.##..L.L.....#LLLLLLLL##.LLLLLL.L#.#LLLL.##".chars().collect()).unwrap();
@@ -135,7 +135,7 @@ mod test {
 
     #[test]
     fn day_11_detects_no_change_in_grid() {
-        let mut grid: Floor = Grid::with_cells(
+        let mut grid: Floor = Grid::new(
             10,
             10,
             "#.#L.L#.###LLL#LL.L#L.#.L..#..#L##.##.L##.#L.LL.LL#.#L#L#.##..L.L.....#L#L##L#L##.LLLLLL.L#.#L#L#.##".chars().collect()).unwrap();

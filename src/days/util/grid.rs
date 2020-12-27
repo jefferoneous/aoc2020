@@ -20,30 +20,15 @@ const NEIGHBOR_DELTAS: [(i16, i16); 8] = [
 ];
 
 impl<T: Default + Clone + PartialEq> Grid<T> {
-    /// Creates a new `Grid` with the given dimensions of cells using the default value of the cell type.
-    ///
-    /// # Example
-    /// ```
-    /// # use grid::Grid;
-    /// let grid: Grid<u32> = Grid::new(100, 100);
-    /// ```
-    pub fn new(rows: u32, columns: u32) -> Self {
-        Self {
-            rows,
-            columns,
-            cells: vec![T::default(); (rows as u32 * columns as u32) as usize],
-        }
-    }
-
     /// Creates a new `Grid` with the given dimensions of cells and cell values.
     ///
     /// # Example
     /// ```
     /// # use grid::Grid;
     /// let cells: Vec<u32> = vec![0; 100];
-    /// let grid = Grid::with_cells(10, 10, cells);
+    /// let grid = Grid::new(10, 10, cells);
     /// ```
-    pub fn with_cells(rows: u32, columns: u32, cells: Vec<T>) -> Result<Self, &'static str> {
+    pub fn new(rows: u32, columns: u32, cells: Vec<T>) -> Result<Self, &'static str> {
         if (rows as u32 * columns as u32) as usize != cells.len() {
             return Err("Number of rows and columns doesn't fit supplied collection of cells");
         }
@@ -157,7 +142,7 @@ mod tests {
             vec![24, 25, 27],
         ];
 
-        let grid: Grid<u32> = Grid::with_cells(3, 3, initial_cells).unwrap();
+        let grid: Grid<u32> = Grid::new(3, 3, initial_cells).unwrap();
 
         for r in 0..3 {
             for c in 0..3 {
