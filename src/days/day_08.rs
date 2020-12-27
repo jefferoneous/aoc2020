@@ -2,6 +2,8 @@ use std::collections::HashSet;
 use std::fmt::Display;
 use std::str::FromStr;
 
+use super::DayRunner;
+
 #[derive(Debug, PartialEq, Eq)]
 enum Instruction {
     Nop(i32),
@@ -164,6 +166,10 @@ pub fn part_two(data: &[String]) {
             println!("Loading instructions failed");
         }
     }
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

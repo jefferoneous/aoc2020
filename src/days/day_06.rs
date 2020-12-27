@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use super::DayRunner;
+
 fn count_questions_everyone_in_group_answered(group: &[String]) -> u32 {
     let mut questions_answered: HashMap<char, u32> = HashMap::new();
 
@@ -77,6 +79,10 @@ pub fn part_one(data: &[String]) {
 pub fn part_two(data: &[String]) {
     let count = count_questions_everyone_answered(data);
     println!("Questions everyone answered: {}", count);
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

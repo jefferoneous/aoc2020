@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
+use super::DayRunner;
+
 #[derive(Debug, PartialEq, Eq)]
 struct Passport {
     birth_year: Option<String>,
@@ -222,6 +224,10 @@ pub fn part_two(data: &[String]) {
     } else {
         println!("No passports found");
     }
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

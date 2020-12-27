@@ -1,3 +1,5 @@
+use super::DayRunner;
+
 fn count_trees(grid: &[String], h_delta: u8, v_delta: u8) -> usize {
     let mut h_pos = 0;
     let mut v_pos = 0;
@@ -37,6 +39,10 @@ pub fn part_two(data: &[String]) {
         .fold(1, |p, c| p * c);
 
     println!("Trees encountered: {}", result);
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

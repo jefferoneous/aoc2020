@@ -1,3 +1,5 @@
+use super::DayRunner;
+
 fn parse_seat_spec(spec: &str) -> u32 {
     let mut row_start = 0;
     let mut row_end = 127;
@@ -71,6 +73,10 @@ pub fn part_one(data: &[String]) {
 pub fn part_two(data: &[String]) {
     let id = find_missing_seat_id(data);
     println!("Missing seat ID: {}", id);
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

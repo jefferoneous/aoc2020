@@ -1,3 +1,5 @@
+use super::DayRunner;
+
 const SUM: u32 = 2020;
 
 fn find_pair(list: &[u32], sum: u32) -> Option<(u32, u32)> {
@@ -56,6 +58,10 @@ pub fn part_two(data: &[String]) {
     } else {
         println!("No solution found for part two");
     }
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

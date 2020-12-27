@@ -1,3 +1,5 @@
+use super::DayRunner;
+
 fn find_weak_number(data: &[i64], window_size: usize) -> i64 {
     for numbers in data.windows(window_size + 1) {
         let target = numbers[window_size];
@@ -65,6 +67,10 @@ pub fn part_two(data: &[String]) {
     let numeric_data = parse_numbers(data);
     let result = find_encryption_weakness(&numeric_data, 25);
     println!("Encryption weakness: {}", result);
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

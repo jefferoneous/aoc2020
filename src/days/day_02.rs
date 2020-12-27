@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
+use super::DayRunner;
+
 #[derive(Debug)]
 struct PasswordSpec {
     a: u8,
@@ -145,6 +147,10 @@ pub fn part_one(data: &[String]) {
 pub fn part_two(data: &[String]) {
     let count = count_invalid_passwords_toboggan_style(data);
     println!("Valid passwords: {}", count);
+}
+
+pub fn runner(data: Vec<String>) -> DayRunner {
+    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]
