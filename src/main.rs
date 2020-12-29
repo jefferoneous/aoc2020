@@ -56,7 +56,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let data = load_data_from_file(path)?;
     let data: Vec<_> = data.iter().map(String::as_str).collect();
 
-    let runner = days::get_runner(day)?;
+    let runner = days::get_runner(day);
     days::run(runner, &data);
 
     Ok(())

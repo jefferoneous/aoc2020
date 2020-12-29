@@ -15,9 +15,10 @@ mod day_11;
 mod day_12;
 mod day_13;
 mod day_14;
+mod day_15;
 
-fn builders() -> Vec<DayRunner> {
-    vec![
+lazy_static! {
+    static ref BUILDERS: Vec<DayRunner> = vec![
         (day_01::part_one, day_01::part_two),
         (day_02::part_one, day_02::part_two),
         (day_03::part_one, day_03::part_two),
@@ -32,7 +33,8 @@ fn builders() -> Vec<DayRunner> {
         (day_12::part_one, day_12::part_two),
         (day_13::part_one, day_13::part_two),
         (day_14::part_one, day_14::part_two),
-    ]
+        (day_15::part_one, day_15::part_two),
+    ];
 }
 
 type DayRunner = (fn(&[&str]), fn(&[&str]));
@@ -45,16 +47,9 @@ pub fn run(runner: DayRunner, data: &[&str]) {
 }
 
 pub fn days_implemented() -> usize {
-    builders().len()
+    BUILDERS.len()
 }
 
-pub fn get_runner(day: usize) -> Result<DayRunner, String> {
-    if day > 0 && day <= days_implemented() {
-        Ok(builders()[day - 1])
-    } else {
-        Err(format!(
-            "Day \"{}\" is not implemented or is not valid",
-            day
-        ))
-    }
+pub fn get_runner(day: usize) -> DayRunner {
+    BUILDERS[day - 1]
 }

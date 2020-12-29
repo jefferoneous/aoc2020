@@ -84,7 +84,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn separates_groups() {
+    fn day_06_separates_groups() {
         let sample_data = vec![
             "abc", "", "a", "b", "c", "", "ab", "ac", "", "a", "a", "a", "a", "", "b",
         ];
