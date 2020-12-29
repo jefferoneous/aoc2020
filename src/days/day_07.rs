@@ -56,7 +56,7 @@ impl RuleMap {
             let mut map: HashMap<String, u32> = HashMap::new();
 
             for raw_contained in SPLIT_RULE_REGEX.split(parts[1]) {
-                for caps in PARSE_RULE_REGEX.captures_iter(raw_contained) {
+                if let Some(caps) = PARSE_RULE_REGEX.captures(raw_contained) {
                     map.insert(
                         (&caps["color"]).to_string(),
                         (&caps["amount"]).parse().unwrap_or_default(),
