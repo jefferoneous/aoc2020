@@ -4,27 +4,21 @@ use std::hash::{Hash, Hasher};
 // Kind of a cheat. I created this type in a different project.
 use super::grid::Grid;
 
-use super::DayRunner;
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
-}
-
-fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let mut grid = parse_into_grid(data);
     while tick(&mut grid, 4, false) {}
     let occupied_seats = count_occupied_seats(&grid);
     println!("Occupied seats: {}", occupied_seats);
 }
 
-fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let mut grid = parse_into_grid(data);
     while tick(&mut grid, 5, true) {}
     let occupied_seats = count_occupied_seats(&grid);
     println!("Occupied seats: {}", occupied_seats);
 }
 
-fn parse_into_grid(data: &[String]) -> Grid {
+fn parse_into_grid(data: &[&str]) -> Grid {
     let columns = data[0].len() as u32;
     let rows = data.len() as u32;
 

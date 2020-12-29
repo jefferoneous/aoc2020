@@ -1,5 +1,3 @@
-use super::DayRunner;
-
 fn parse_seat_spec(spec: &str) -> u32 {
     let mut row_start = 0;
     let mut row_end = 127;
@@ -33,7 +31,7 @@ fn parse_seat_spec(spec: &str) -> u32 {
     row_start * 8 + column_start
 }
 
-fn calculate_highest_seat_id(data: &[String]) -> u32 {
+fn calculate_highest_seat_id(data: &[&str]) -> u32 {
     data.iter().fold(0u32, |id, seat_spec| {
         let seat_id = parse_seat_spec(seat_spec);
         if seat_id > id {
@@ -44,7 +42,7 @@ fn calculate_highest_seat_id(data: &[String]) -> u32 {
     })
 }
 
-fn find_missing_seat_id(data: &[String]) -> u32 {
+fn find_missing_seat_id(data: &[&str]) -> u32 {
     let mut ids: Vec<u32> = data.iter().map(|spec| parse_seat_spec(&spec)).collect();
     ids.sort();
 
@@ -65,18 +63,14 @@ fn find_missing_seat_id(data: &[String]) -> u32 {
         .unwrap_or_default()
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let id = calculate_highest_seat_id(data);
     println!("Highest seat ID: {}", id);
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let id = find_missing_seat_id(data);
     println!("Missing seat ID: {}", id);
-}
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]
@@ -85,13 +79,7 @@ mod test {
 
     #[test]
     fn day_05_calculates_correct_seat_ids() {
-        let sample_data = vec![
-            "FBFBBFFRLR".to_string(),
-            "BFFFBBFRRR".to_string(),
-            "FFFBBBFRRR".to_string(),
-            "BBFFBBFRLL".to_string(),
-        ];
-
+        let sample_data = vec!["FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL"];
         let seat_ids = vec![357, 567, 119, 820];
 
         let mut calculated_seat_ids = vec![];
@@ -105,12 +93,7 @@ mod test {
 
     #[test]
     fn day_05_calculates_correct_highest_seat_id() {
-        let sample_data = vec![
-            "FBFBBFFRLR".to_string(),
-            "BFFFBBFRRR".to_string(),
-            "FFFBBBFRRR".to_string(),
-            "BBFFBBFRLL".to_string(),
-        ];
+        let sample_data = vec!["FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL"];
 
         let seat_id = calculate_highest_seat_id(&sample_data);
 

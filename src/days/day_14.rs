@@ -2,18 +2,12 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
 
-use super::DayRunner;
-
 lazy_static! {
     static ref PARSE_MEM_REGEX: Regex =
         Regex::new(r"mem\[(?P<address>\d+)\] *= *(?P<value>\d+)").unwrap();
 }
 
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
-}
-
-fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let mut decoder = Decoder::new();
 
     if let Err(e) = decoder.load(&data) {
@@ -26,7 +20,7 @@ fn part_one(data: &[String]) {
     println!("Sum: {}", decoder.calculate_sum());
 }
 
-fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let mut decoder = Decoder::new();
 
     if let Err(e) = decoder.load(&data) {
@@ -91,7 +85,7 @@ impl Decoder {
         }
     }
 
-    fn load(&mut self, instructions: &[String]) -> Result<(), String> {
+    fn load(&mut self, instructions: &[&str]) -> Result<(), String> {
         for s in instructions {
             let instruction = s.parse()?;
             self.instructions.push(instruction);
@@ -188,10 +182,10 @@ mod test {
     #[test]
     fn day_14_parses_instructions() -> Result<(), String> {
         let raw_instructions = vec![
-            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X".to_string(),
-            "mem[8] = 11".to_string(),
-            "mem[7] = 101".to_string(),
-            "mem[8] = 0".to_string(),
+            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
+            "mem[8] = 11",
+            "mem[7] = 101",
+            "mem[8] = 0",
         ];
         let mut decoder = Decoder::new();
 
@@ -210,7 +204,7 @@ mod test {
 
     #[test]
     fn day_14_executes_mask_instruction() -> Result<(), String> {
-        let raw_instructions = vec!["mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X".to_string()];
+        let raw_instructions = vec!["mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X"];
         let mut decoder = Decoder::new();
 
         decoder.load(&raw_instructions)?;
@@ -226,7 +220,7 @@ mod test {
 
     #[test]
     fn day_14_executes_mem_instruction() -> Result<(), String> {
-        let raw_instructions = vec!["mem[8] = 11".to_string()];
+        let raw_instructions = vec!["mem[8] = 11"];
         let mut decoder = Decoder::new();
 
         decoder.load(&raw_instructions)?;
@@ -240,9 +234,9 @@ mod test {
     #[test]
     fn day_14_executes_mem_instruction_with_applied_mask() -> Result<(), String> {
         let raw_instructions = vec![
-            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X".to_string(),
-            "mem[8] = 11".to_string(),
-            "mem[7] = 101".to_string(),
+            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
+            "mem[8] = 11",
+            "mem[7] = 101",
         ];
         let mut decoder = Decoder::new();
 
@@ -258,10 +252,10 @@ mod test {
     #[test]
     fn day_14_calculates_sum_of_memory_values() -> Result<(), String> {
         let raw_instructions = vec![
-            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X".to_string(),
-            "mem[8] = 11".to_string(),
-            "mem[7] = 101".to_string(),
-            "mem[8] = 0".to_string(),
+            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
+            "mem[8] = 11",
+            "mem[7] = 101",
+            "mem[8] = 0",
         ];
         let mut decoder = Decoder::new();
 
@@ -276,10 +270,10 @@ mod test {
     #[test]
     fn day_14_calculates_sum_of_memory_values_v2() -> Result<(), String> {
         let raw_instructions = vec![
-            "mask = 000000000000000000000000000000X1001X".to_string(),
-            "mem[42] = 100".to_string(),
-            "mask = 00000000000000000000000000000000X0XX".to_string(),
-            "mem[26] = 1".to_string(),
+            "mask = 000000000000000000000000000000X1001X",
+            "mem[42] = 100",
+            "mask = 00000000000000000000000000000000X0XX",
+            "mem[26] = 1",
         ];
         let mut decoder = Decoder::new();
 

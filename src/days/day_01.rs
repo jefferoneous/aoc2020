@@ -1,5 +1,3 @@
-use super::DayRunner;
-
 const SUM: u32 = 2020;
 
 fn find_pair(list: &[u32], sum: u32) -> Option<(u32, u32)> {
@@ -30,7 +28,7 @@ fn find_triple(list: &[u32], sum: u32) -> Option<(u32, u32, u32)> {
     None
 }
 
-fn convert_strings_to_numbers(contents: &[String]) -> Vec<u32> {
+fn convert_strings_to_numbers(contents: &[&str]) -> Vec<u32> {
     let mut result: Vec<u32> = vec![];
 
     for line in contents {
@@ -42,7 +40,7 @@ fn convert_strings_to_numbers(contents: &[String]) -> Vec<u32> {
     result
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let list = convert_strings_to_numbers(data);
     if let Some((a, b)) = find_pair(&list, SUM) {
         println!("a: {}, b: {}, a*b: {}", a, b, a * b);
@@ -51,17 +49,13 @@ pub fn part_one(data: &[String]) {
     }
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let list = convert_strings_to_numbers(data);
     if let Some((a, b, c)) = find_triple(&list, SUM) {
         println!("a: {}, b: {}, c: {}, a*b*c: {}", a, b, c, a * b * c);
     } else {
         println!("No solution found for part two");
     }
-}
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

@@ -16,63 +16,41 @@ mod day_12;
 mod day_13;
 mod day_14;
 
-fn builders() -> Vec<fn(Vec<String>) -> DayRunner> {
+fn builders() -> Vec<DayRunner> {
     vec![
-        day_01::runner,
-        day_02::runner,
-        day_03::runner,
-        day_04::runner,
-        day_05::runner,
-        day_06::runner,
-        day_07::runner,
-        day_08::runner,
-        day_09::runner,
-        day_10::runner,
-        day_11::runner,
-        day_12::runner,
-        day_13::runner,
-        day_14::runner,
+        (day_01::part_one, day_01::part_two),
+        (day_02::part_one, day_02::part_two),
+        (day_03::part_one, day_03::part_two),
+        (day_04::part_one, day_04::part_two),
+        (day_05::part_one, day_05::part_two),
+        (day_06::part_one, day_06::part_two),
+        (day_07::part_one, day_07::part_two),
+        (day_08::part_one, day_08::part_two),
+        (day_09::part_one, day_09::part_two),
+        (day_10::part_one, day_10::part_two),
+        (day_11::part_one, day_11::part_two),
+        (day_12::part_one, day_12::part_two),
+        (day_13::part_one, day_13::part_two),
+        (day_14::part_one, day_14::part_two),
     ]
 }
 
-pub struct DayRunner {
-    data: Vec<String>,
-    part_one: Option<fn(&[String])>,
-    part_two: Option<fn(&[String])>,
-}
+type DayRunner = (fn(&[&str]), fn(&[&str]));
 
-impl DayRunner {
-    pub fn new(
-        data: Vec<String>,
-        part_one: Option<fn(&[String])>,
-        part_two: Option<fn(&[String])>,
-    ) -> Self {
-        Self {
-            data,
-            part_one,
-            part_two,
-        }
-    }
-
-    pub fn run(&self) {
-        if let Some(part_one) = self.part_one {
-            println!("\nPart One\n========");
-            part_one(&self.data);
-        }
-        if let Some(part_two) = self.part_two {
-            println!("\nPart Two\n========");
-            part_two(&self.data);
-        }
-    }
+pub fn run(runner: DayRunner, data: &[&str]) {
+    println!("\nPart One\n========");
+    (runner.0)(&data);
+    println!("\nPart Two\n========");
+    (runner.1)(&data);
 }
 
 pub fn days_implemented() -> usize {
     builders().len()
 }
 
-pub fn get_runner(day: usize, data: Vec<String>) -> Result<DayRunner, String> {
+pub fn get_runner(day: usize) -> Result<DayRunner, String> {
     if day > 0 && day <= days_implemented() {
-        Ok((builders()[day - 1])(data))
+        Ok(builders()[day - 1])
     } else {
         Err(format!(
             "Day \"{}\" is not implemented or is not valid",

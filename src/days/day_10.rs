@@ -1,11 +1,5 @@
 use std::collections::HashMap;
 
-use super::DayRunner;
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
-}
-
 fn calculate_differences(data: &[u64]) -> Vec<u64> {
     let mut v = vec![0];
     v.extend_from_slice(data);
@@ -32,7 +26,7 @@ fn calculate_distribution(diffs: &[u64]) -> HashMap<u64, u64> {
     distribs
 }
 
-fn calculate_product(data: &[String]) -> u64 {
+fn calculate_product(data: &[&str]) -> u64 {
     let numeric_data = parse_list(data);
     let diffs = calculate_differences(&numeric_data);
     let distrib = calculate_distribution(&diffs);
@@ -40,7 +34,7 @@ fn calculate_product(data: &[String]) -> u64 {
     distrib.get(&1).unwrap() * distrib.get(&3).unwrap()
 }
 
-fn calculate_combinations(data: &[String]) -> u64 {
+fn calculate_combinations(data: &[&str]) -> u64 {
     let numeric_data = parse_list(data);
     let diffs = calculate_differences(&numeric_data);
     count_combinations(&diffs)
@@ -64,18 +58,18 @@ fn count_combinations(data: &[u64]) -> u64 {
     result
 }
 
-fn parse_list(data: &[String]) -> Vec<u64> {
+fn parse_list(data: &[&str]) -> Vec<u64> {
     data.iter()
         .map(|s| s.parse::<u64>().unwrap_or_default())
         .collect()
 }
 
-fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let product = calculate_product(&data);
     println!("Product: {:?}", product);
 }
 
-fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let combinations = calculate_combinations(&data);
     println!("Combinations: {:?}", combinations);
 }
@@ -144,19 +138,7 @@ mod test {
 
     #[test]
     fn day_10_parses_list() {
-        let sample_data = vec![
-            "16".to_string(),
-            "10".to_string(),
-            "15".to_string(),
-            "5".to_string(),
-            "1".to_string(),
-            "11".to_string(),
-            "7".to_string(),
-            "19".to_string(),
-            "6".to_string(),
-            "12".to_string(),
-            "4".to_string(),
-        ];
+        let sample_data = vec!["16", "10", "15", "5", "1", "11", "7", "19", "6", "12", "4"];
         let expected = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
 
         assert_eq!(expected, parse_list(&sample_data));
@@ -164,19 +146,7 @@ mod test {
 
     #[test]
     fn day_10_product_of_distribution() {
-        let sample_data = vec![
-            "16".to_string(),
-            "10".to_string(),
-            "15".to_string(),
-            "5".to_string(),
-            "1".to_string(),
-            "11".to_string(),
-            "7".to_string(),
-            "19".to_string(),
-            "6".to_string(),
-            "12".to_string(),
-            "4".to_string(),
-        ];
+        let sample_data = vec!["16", "10", "15", "5", "1", "11", "7", "19", "6", "12", "4"];
 
         let product = calculate_product(&sample_data);
 

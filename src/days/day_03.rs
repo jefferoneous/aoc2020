@@ -1,6 +1,4 @@
-use super::DayRunner;
-
-fn count_trees(grid: &[String], h_delta: u8, v_delta: u8) -> usize {
+fn count_trees(grid: &[&str], h_delta: u8, v_delta: u8) -> usize {
     let mut h_pos = 0;
     let mut v_pos = 0;
     let mut count: usize = 0;
@@ -25,12 +23,12 @@ fn count_trees(grid: &[String], h_delta: u8, v_delta: u8) -> usize {
     count
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let count = count_trees(data, 3, 1);
     println!("Trees encountered: {}", count);
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let slopes: Vec<(u8, u8)> = vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
 
     let result = slopes
@@ -41,16 +39,13 @@ pub fn part_two(data: &[String]) {
     println!("Trees encountered: {}", result);
 }
 
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
 
-    fn test_data() -> Vec<String> {
-        let raw_data = [
+    #[test]
+    fn day_03_counts_correct_number_of_trees() {
+        let grid = vec![
             "..##.......",
             "#...#...#..",
             ".#....#..#.",
@@ -63,12 +58,6 @@ mod test {
             "#...##....#",
             ".#..#...#.#",
         ];
-        raw_data.iter().map(|l| l.to_string()).collect()
-    }
-
-    #[test]
-    fn day_03_counts_correct_number_of_trees() {
-        let grid = test_data();
 
         let count = count_trees(&grid, 3, 1);
         assert_eq!(7, count);

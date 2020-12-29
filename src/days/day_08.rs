@@ -2,8 +2,6 @@ use std::collections::HashSet;
 use std::fmt::Display;
 use std::str::FromStr;
 
-use super::DayRunner;
-
 #[derive(Debug, PartialEq, Eq)]
 enum Instruction {
     Nop(i32),
@@ -123,7 +121,7 @@ impl Processor {
     }
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let mut processor = Processor::new();
     if let Ok(()) = processor.load(data) {
         let (encountered_loop, result) = processor.run();
@@ -136,7 +134,7 @@ pub fn part_one(data: &[String]) {
     }
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     for index in 0..data.len() {
         let new_data: Vec<String> = data
             .iter()
@@ -148,10 +146,10 @@ pub fn part_two(data: &[String]) {
                     } else if line.contains("jmp") {
                         line.replace("jmp", "nop")
                     } else {
-                        line.clone()
+                        line.to_string()
                     }
                 } else {
-                    line.clone()
+                    line.to_string()
                 }
             })
             .collect();
@@ -166,10 +164,6 @@ pub fn part_two(data: &[String]) {
             println!("Loading instructions failed");
         }
     }
-}
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]

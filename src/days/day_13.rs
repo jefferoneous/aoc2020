@@ -1,10 +1,4 @@
-use super::DayRunner;
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
-}
-
-fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let (timestamp, bus_list) = parse_input(&data);
     let (id, diff) = find_earliest_bus_and_time_diff(timestamp, &bus_list);
 
@@ -16,7 +10,7 @@ fn part_one(data: &[String]) {
     );
 }
 
-fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let (_, raw_bus_list) = parse_input(&data);
     let bus_list = parse_bus_list(&raw_bus_list);
     let timestamp = find_earliest_sequential_departure_timestamp(&bus_list);
@@ -24,13 +18,13 @@ fn part_two(data: &[String]) {
     println!("Timestamp: {}", timestamp);
 }
 
-fn parse_input(data: &[String]) -> (usize, Vec<String>) {
+fn parse_input<'a>(data: &[&'a str]) -> (usize, Vec<&'a str>) {
     let timestamp: usize = data[0].parse().unwrap_or_default();
-    let list: Vec<String> = data[1].split(',').map(|s| s.to_string()).collect();
+    let list: Vec<&str> = data[1].split(',').map(|s| s).collect();
     (timestamp, list)
 }
 
-fn parse_bus_list(data: &[String]) -> Vec<(usize, usize)> {
+fn parse_bus_list(data: &[&str]) -> Vec<(usize, usize)> {
     data.iter()
         .enumerate()
         .filter_map(|(i, s)| {
@@ -43,7 +37,7 @@ fn parse_bus_list(data: &[String]) -> Vec<(usize, usize)> {
         .collect()
 }
 
-fn find_earliest_bus_and_time_diff(timestamp: usize, bus_list: &[String]) -> (usize, usize) {
+fn find_earliest_bus_and_time_diff(timestamp: usize, bus_list: &[&str]) -> (usize, usize) {
     bus_list
         .iter()
         .filter_map(|s| s.parse::<usize>().ok())
@@ -69,15 +63,9 @@ mod test {
 
     #[test]
     fn day_13_parse_input() {
-        let data: Vec<String> = "939\n7,13,x,x,59,x,31,19"
-            .lines()
-            .map(|s| s.to_string())
-            .collect();
+        let data: Vec<&str> = "939\n7,13,x,x,59,x,31,19".lines().collect();
 
-        let expected_bus_list: Vec<String> = vec!["7", "13", "x", "x", "59", "x", "31", "19"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let expected_bus_list = vec!["7", "13", "x", "x", "59", "x", "31", "19"];
 
         assert_eq!((939, expected_bus_list), parse_input(&data));
     }
@@ -85,10 +73,7 @@ mod test {
     #[test]
     fn day_13_find_earliest_bus_and_time() {
         let timestamp = 939;
-        let bus_list: Vec<String> = vec!["7", "13", "x", "x", "59", "x", "31", "19"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let bus_list: Vec<&str> = vec!["7", "13", "x", "x", "59", "x", "31", "19"];
 
         assert_eq!(
             (59, 5),
@@ -98,10 +83,7 @@ mod test {
 
     #[test]
     fn day_13_earliest_sequential_departure_01() {
-        let raw_bus_list: Vec<String> = vec!["17", "x", "13", "19"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let raw_bus_list: Vec<&str> = vec!["17", "x", "13", "19"];
         let bus_list = parse_bus_list(&raw_bus_list);
 
         assert_eq!(
@@ -112,10 +94,7 @@ mod test {
 
     #[test]
     fn day_13_earliest_sequential_departure_02() {
-        let raw_bus_list: Vec<String> = vec!["67", "7", "59", "61"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let raw_bus_list: Vec<&str> = vec!["67", "7", "59", "61"];
         let bus_list = parse_bus_list(&raw_bus_list);
 
         assert_eq!(
@@ -126,10 +105,7 @@ mod test {
 
     #[test]
     fn day_13_earliest_sequential_departure_03() {
-        let raw_bus_list: Vec<String> = vec!["67", "x", "7", "59", "61"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let raw_bus_list: Vec<&str> = vec!["67", "x", "7", "59", "61"];
         let bus_list = parse_bus_list(&raw_bus_list);
 
         assert_eq!(
@@ -140,10 +116,7 @@ mod test {
 
     #[test]
     fn day_13_earliest_sequential_departure_04() {
-        let raw_bus_list: Vec<String> = vec!["67", "7", "x", "59", "61"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let raw_bus_list: Vec<&str> = vec!["67", "7", "x", "59", "61"];
         let bus_list = parse_bus_list(&raw_bus_list);
 
         assert_eq!(
@@ -154,10 +127,7 @@ mod test {
 
     #[test]
     fn day_13_earliest_sequential_departure_05() {
-        let raw_bus_list: Vec<String> = vec!["1789", "37", "47", "1889"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let raw_bus_list: Vec<&str> = vec!["1789", "37", "47", "1889"];
         let bus_list = parse_bus_list(&raw_bus_list);
 
         assert_eq!(
@@ -167,8 +137,9 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn day_13_earliest_sequential_departure_06() {
-        let data = vec!["0".to_string(), "17,x,x,x,x,x,x,x,x,x,x,37,x,x,x,x,x,409,x,29,x,x,x,x,x,x,x,x,x,x,13,x,x,x,x,x,x,x,x,x,23,x,x,x,x,x,x,x,373,x,x,x,x,x,x,x,x,x,41,x,x,x,x,x,x,x,x,19".to_string()];
+        let data = vec!["0", "17,x,x,x,x,x,x,x,x,x,x,37,x,x,x,x,x,409,x,29,x,x,x,x,x,x,x,x,x,x,13,x,x,x,x,x,x,x,x,x,23,x,x,x,x,x,x,x,373,x,x,x,x,x,x,x,x,x,41,x,x,x,x,x,x,x,x,19"];
         let (_, bus_list) = parse_input(&data);
         let bus_list = parse_bus_list(&bus_list);
 

@@ -1,20 +1,14 @@
 use std::ops::{Add, Sub};
 use std::str::FromStr;
 
-use super::DayRunner;
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
-}
-
-fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let mut ship = Ship::new();
     navigate(&mut ship, &data);
     let mdist = manhattan_distance(ship.position);
     println!("Manhattan Distance: {}", mdist);
 }
 
-fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let mut ship = Ship::new();
     ship.use_waypoint = true;
     navigate(&mut ship, &data);
@@ -22,7 +16,7 @@ fn part_two(data: &[String]) {
     println!("Manhattan Distance: {}", mdist);
 }
 
-fn navigate(ship: &mut Ship, data: &[String]) {
+fn navigate(ship: &mut Ship, data: &[&str]) {
     for command in data {
         ship.follow_command(command);
     }

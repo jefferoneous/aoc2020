@@ -51,13 +51,13 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let day: usize = matches.value_of("day").unwrap_or("1").parse().unwrap_or(1);
 
-    let path: PathBuf = ["input", format!("day_{:02}", day).as_ref()]
-        .iter()
-        .collect();
+    let path: PathBuf = ["input", &format!("day_{:02}", day)].iter().collect();
 
     let data = load_data_from_file(path)?;
-    let runner = days::get_runner(day, data)?;
-    runner.run();
+    let data: Vec<_> = data.iter().map(String::as_str).collect();
+
+    let runner = days::get_runner(day)?;
+    days::run(runner, &data);
 
     Ok(())
 }

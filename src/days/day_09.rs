@@ -1,5 +1,3 @@
-use super::DayRunner;
-
 fn find_weak_number(data: &[i64], window_size: usize) -> i64 {
     for numbers in data.windows(window_size + 1) {
         let target = numbers[window_size];
@@ -51,60 +49,34 @@ fn find_encryption_weakness(data: &[i64], window_size: usize) -> i64 {
     0
 }
 
-fn parse_numbers(data: &[String]) -> Vec<i64> {
+fn parse_numbers(data: &[&str]) -> Vec<i64> {
     data.iter()
         .map(|s| s.parse::<i64>().unwrap_or_default())
         .collect()
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let numeric_data = parse_numbers(data);
     let result = find_weak_number(&numeric_data, 25);
     println!("Weak number: {}", result);
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let numeric_data = parse_numbers(data);
     let result = find_encryption_weakness(&numeric_data, 25);
     println!("Encryption weakness: {}", result);
-}
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
-    fn get_sample_data() -> Vec<String> {
-        vec![
-            "35".to_string(),
-            "20".to_string(),
-            "15".to_string(),
-            "25".to_string(),
-            "47".to_string(),
-            "40".to_string(),
-            "62".to_string(),
-            "55".to_string(),
-            "65".to_string(),
-            "95".to_string(),
-            "102".to_string(),
-            "117".to_string(),
-            "150".to_string(),
-            "182".to_string(),
-            "127".to_string(),
-            "219".to_string(),
-            "299".to_string(),
-            "277".to_string(),
-            "309".to_string(),
-            "576".to_string(),
-        ]
-    }
-
     #[test]
     fn day_09_finds_weak_number() {
-        let sample_data = get_sample_data();
+        let sample_data = vec![
+            "35", "20", "15", "25", "47", "40", "62", "55", "65", "95", "102", "117", "150", "182",
+            "127", "219", "299", "277", "309", "576",
+        ];
         let data = parse_numbers(&sample_data);
 
         assert_eq!(find_weak_number(&data, 5), 127);
@@ -112,7 +84,10 @@ mod test {
 
     #[test]
     fn day_09_finds_encryption_weakness() {
-        let sample_data = get_sample_data();
+        let sample_data = vec![
+            "35", "20", "15", "25", "47", "40", "62", "55", "65", "95", "102", "117", "150", "182",
+            "127", "219", "299", "277", "309", "576",
+        ];
         let data = parse_numbers(&sample_data);
 
         assert_eq!(find_encryption_weakness(&data, 5), 62);

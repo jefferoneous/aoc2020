@@ -1,8 +1,6 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
-use super::DayRunner;
-
 #[derive(Debug, PartialEq, Eq)]
 struct Passport {
     birth_year: Option<String>,
@@ -177,7 +175,7 @@ impl FromStr for Passport {
     }
 }
 
-fn parse_input_lines(lines: &[String]) -> Result<Vec<Passport>, ParseError> {
+fn parse_input_lines(lines: &[&str]) -> Result<Vec<Passport>, ParseError> {
     let mut passport_data = String::new();
     let mut result: Vec<Passport> = vec![];
 
@@ -208,7 +206,7 @@ fn count_passports_with_valid_values(passports: &[Passport]) -> usize {
     passports.iter().filter(|p| p.has_valid_values()).count()
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     if let Ok(passports) = parse_input_lines(data) {
         let count = count_passports_with_all_required_values(&passports);
         println!("Valid passports: {}", count);
@@ -217,17 +215,13 @@ pub fn part_one(data: &[String]) {
     }
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     if let Ok(passports) = parse_input_lines(data) {
         let count = count_passports_with_valid_values(&passports);
         println!("Valid passports: {}", count);
     } else {
         println!("No passports found");
     }
-}
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]
@@ -408,19 +402,19 @@ mod test {
     #[test]
     fn day_04_parses_input_lines_as_passports() -> Result<(), ParseError> {
         let sample_lines = vec![
-            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd".to_string(),
-            "byr:1937 iyr:2017 cid:147 hgt:183cm".to_string(),
-            "".to_string(),
-            "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884".to_string(),
-            "hcl:#cfa07d byr:1929".to_string(),
-            "".to_string(),
-            "hcl:#ae17e1 iyr:2013".to_string(),
-            "eyr:2024".to_string(),
-            "ecl:brn pid:760753108 byr:1931".to_string(),
-            "hgt:179cm".to_string(),
-            "".to_string(),
-            "hcl:#cfa07d eyr:2025 pid:166559648".to_string(),
-            "iyr:2011 ecl:brn hgt:59in".to_string(),
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
+            "byr:1937 iyr:2017 cid:147 hgt:183cm",
+            "",
+            "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884",
+            "hcl:#cfa07d byr:1929",
+            "",
+            "hcl:#ae17e1 iyr:2013",
+            "eyr:2024",
+            "ecl:brn pid:760753108 byr:1931",
+            "hgt:179cm",
+            "",
+            "hcl:#cfa07d eyr:2025 pid:166559648",
+            "iyr:2011 ecl:brn hgt:59in",
         ];
 
         parse_input_lines(&sample_lines)?;
@@ -431,19 +425,19 @@ mod test {
     #[test]
     fn day_04_counts_passports_with_required_values() -> Result<(), ParseError> {
         let sample_lines = vec![
-            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd".to_string(),
-            "byr:1937 iyr:2017 cid:147 hgt:183cm".to_string(),
-            "".to_string(),
-            "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884".to_string(),
-            "hcl:#cfa07d byr:1929".to_string(),
-            "".to_string(),
-            "hcl:#ae17e1 iyr:2013".to_string(),
-            "eyr:2024".to_string(),
-            "ecl:brn pid:760753108 byr:1931".to_string(),
-            "hgt:179cm".to_string(),
-            "".to_string(),
-            "hcl:#cfa07d eyr:2025 pid:166559648".to_string(),
-            "iyr:2011 ecl:brn hgt:59in".to_string(),
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
+            "byr:1937 iyr:2017 cid:147 hgt:183cm",
+            "",
+            "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884",
+            "hcl:#cfa07d byr:1929",
+            "",
+            "hcl:#ae17e1 iyr:2013",
+            "eyr:2024",
+            "ecl:brn pid:760753108 byr:1931",
+            "hgt:179cm",
+            "",
+            "hcl:#cfa07d eyr:2025 pid:166559648",
+            "iyr:2011 ecl:brn hgt:59in",
         ];
 
         let passports = parse_input_lines(&sample_lines)?;
@@ -457,19 +451,19 @@ mod test {
     #[test]
     fn day_04_counts_passports_with_valid_values() -> Result<(), ParseError> {
         let sample_lines = vec![
-            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd".to_string(),
-            "byr:1937 iyr:2017 cid:147 hgt:183cm".to_string(),
-            "".to_string(),
-            "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884".to_string(),
-            "hcl:#cfa07d byr:1929".to_string(),
-            "".to_string(),
-            "hcl:#ae17e1 iyr:2013".to_string(),
-            "eyr:2024".to_string(),
-            "ecl:brn pid:760753108 byr:1931".to_string(),
-            "hgt:179cm".to_string(),
-            "".to_string(),
-            "hcl:#cfa07d eyr:2025 pid:166559648".to_string(),
-            "iyr:2011 ecl:brn hgt:59in".to_string(),
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
+            "byr:1937 iyr:2017 cid:147 hgt:183cm",
+            "",
+            "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884",
+            "hcl:#cfa07d byr:1929",
+            "",
+            "hcl:#ae17e1 iyr:2013",
+            "eyr:2024",
+            "ecl:brn pid:760753108 byr:1931",
+            "hgt:179cm",
+            "",
+            "hcl:#cfa07d eyr:2025 pid:166559648",
+            "iyr:2011 ecl:brn hgt:59in",
         ];
 
         let passports = parse_input_lines(&sample_lines)?;

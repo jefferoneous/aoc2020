@@ -1,8 +1,6 @@
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 
-use super::DayRunner;
-
 lazy_static! {
     static ref PARSE_RULE_REGEX: Regex = Regex::new(r"(?P<amount>\d+) (?P<color>.*)").unwrap();
     static ref SPLIT_RULE_REGEX: Regex = Regex::new(r" bags?[.,] ?").unwrap();
@@ -71,7 +69,7 @@ impl RuleMap {
     }
 }
 
-pub fn part_one(data: &[String]) {
+pub fn part_one(data: &[&str]) {
     let mut rule_map = RuleMap::new();
     for line in data {
         rule_map.parse_rule(line);
@@ -83,17 +81,13 @@ pub fn part_one(data: &[String]) {
     );
 }
 
-pub fn part_two(data: &[String]) {
+pub fn part_two(data: &[&str]) {
     let mut rule_map = RuleMap::new();
     for line in data {
         rule_map.parse_rule(line);
     }
     let count = rule_map.count_required_bags("shiny gold");
     println!("Bags that shiny gold bag requires: {}", count);
-}
-
-pub fn runner(data: Vec<String>) -> DayRunner {
-    DayRunner::new(data, Some(part_one), Some(part_two))
 }
 
 #[cfg(test)]
