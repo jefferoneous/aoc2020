@@ -27,7 +27,16 @@ fn part_one(data: &[String]) {
 }
 
 fn part_two(data: &[String]) {
-    todo!("do something and print the result");
+    let mut decoder = Decoder::new();
+
+    if let Err(e) = decoder.load(&data) {
+        println!("An error occurred while loading instructions: {}", e);
+        return;
+    }
+
+    decoder.run_v2();
+
+    println!("Sum: {}", decoder.calculate_sum());
 }
 
 #[derive(Debug, PartialEq)]
@@ -96,14 +105,28 @@ impl Decoder {
             match instruction {
                 Instruction::Mask(mask) => self.mask = mask.clone(),
                 Instruction::Mem(address, value) => {
-                    let masked_value = self.apply_mask(*value);
+                    let masked_value = self.apply_value_mask(*value);
                     self.memory.insert(*address, masked_value);
                 }
             }
         }
     }
 
-    fn apply_mask(&self, value: usize) -> usize {
+    fn run_v2(&mut self) {
+        for instruction in &self.instructions {
+            match instruction {
+                Instruction::Mask(mask) => self.mask = mask.clone(),
+                Instruction::Mem(address, value) => {
+                    let masked_address = self.apply_address_mask(*address);
+                    for address in Self::generate_addresses(&masked_address) {
+                        self.memory.insert(address, *value);
+                    }
+                }
+            }
+        }
+    }
+
+    fn apply_value_mask(&self, value: usize) -> usize {
         let s: String = format!("{:036b}", value)
             .chars()
             .zip(self.mask.chars())
@@ -116,8 +139,45 @@ impl Decoder {
         usize::from_str_radix(&s, 2).unwrap()
     }
 
+    fn apply_address_mask(&self, address: usize) -> String {
+        format!("{:036b}", address)
+            .chars()
+            .zip(self.mask.chars())
+            .map(|(vc, mc)| match mc {
+                '0' => vc,
+                _ => mc,
+            })
+            .collect()
+    }
+
     fn calculate_sum(&self) -> usize {
         self.memory.values().sum()
+    }
+
+    fn generate_addresses(mask: &str) -> Vec<usize> {
+        let mut result = vec![];
+        let float_bit_count = mask.chars().filter(|&c| c == 'X').count();
+        let num_addresses: usize = 2usize.pow(float_bit_count as u32);
+
+        for i in 0..num_addresses {
+            let floated_bits = format!("{:0width$b}", i, width = float_bit_count);
+            let mut floated_bit_chars = floated_bits.chars();
+
+            let s = mask
+                .chars()
+                .map(|c| {
+                    if c == 'X' {
+                        floated_bit_chars.next().unwrap()
+                    } else {
+                        c
+                    }
+                })
+                .collect::<String>();
+
+            result.push(usize::from_str_radix(&s, 2).unwrap());
+        }
+
+        result
     }
 }
 
@@ -209,6 +269,24 @@ mod test {
         decoder.run();
 
         assert_eq!(165, decoder.calculate_sum());
+
+        Ok(())
+    }
+
+    #[test]
+    fn day_14_calculates_sum_of_memory_values_v2() -> Result<(), String> {
+        let raw_instructions = vec![
+            "mask = 000000000000000000000000000000X1001X".to_string(),
+            "mem[42] = 100".to_string(),
+            "mask = 00000000000000000000000000000000X0XX".to_string(),
+            "mem[26] = 1".to_string(),
+        ];
+        let mut decoder = Decoder::new();
+
+        decoder.load(&raw_instructions)?;
+        decoder.run_v2();
+
+        assert_eq!(208, decoder.calculate_sum());
 
         Ok(())
     }
