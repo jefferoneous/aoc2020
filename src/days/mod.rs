@@ -16,8 +16,11 @@ mod day_12;
 mod day_13;
 mod day_14;
 mod day_15;
+mod day_16;
 
-lazy_static! {
+use lazy_static;
+
+lazy_static::lazy_static! {
     static ref BUILDERS: Vec<DayRunner> = vec![
         (day_01::part_one, day_01::part_two),
         (day_02::part_one, day_02::part_two),
@@ -34,6 +37,7 @@ lazy_static! {
         (day_13::part_one, day_13::part_two),
         (day_14::part_one, day_14::part_two),
         (day_15::part_one, day_15::part_two),
+        (day_16::part_one, day_16::part_two),
     ];
 }
 
@@ -46,10 +50,10 @@ pub fn run(runner: DayRunner, data: &[&str]) {
     (runner.1)(&data);
 }
 
-pub fn days_implemented() -> usize {
-    BUILDERS.len()
+pub fn days_implemented() -> u8 {
+    BUILDERS.len() as u8
 }
 
-pub fn get_runner(day: usize) -> DayRunner {
-    BUILDERS[day - 1]
+pub fn get_runner(day: u8) -> DayRunner {
+    BUILDERS[(day - 1) as usize]
 }

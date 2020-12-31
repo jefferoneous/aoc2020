@@ -1,7 +1,8 @@
+use lazy_static;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref PARSE_RULE_REGEX: Regex = Regex::new(r"(?P<amount>\d+) (?P<color>.*)").unwrap();
     static ref SPLIT_RULE_REGEX: Regex = Regex::new(r" bags?[.,] ?").unwrap();
 }

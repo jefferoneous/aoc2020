@@ -14,48 +14,81 @@ pub fn part_two(data: &[&str]) {
     println!("The 30,000,000th number: {}", result);
 }
 
-fn parse_input(data: &str) -> Vec<usize> {
+fn parse_input(data: &str) -> Vec<u32> {
     data.split(",").filter_map(|s| s.parse().ok()).collect()
 }
 
-fn calculate_nth_number(list: &[usize], n: usize) -> usize {
-    if n < list.len() {
-        return list[n];
-    }
+#[cfg(not(debug_assertions))]
+const BOUNDS: u32 = 3 * 512 * 1024;
 
-    type SpokenNumbers = HashMap<usize, usize>;
+#[cfg(debug_assertions)]
+const BOUNDS: u32 = 512 * 1024;
 
-    fn record_number(numbers: &mut SpokenNumbers, number: usize, turn: usize) {
-        if let Some(v) = numbers.get_mut(&number) {
-            *v = turn;
-        } else {
-            numbers.insert(number, turn);
+struct NumberRecorder {
+    numbers_low: [u32; BOUNDS as usize],
+    numbers_high: HashMap<u32, u32>,
+}
+
+impl NumberRecorder {
+    fn new() -> Self {
+        Self {
+            numbers_low: [0; BOUNDS as usize],
+            numbers_high: HashMap::with_capacity(1024 * 1024),
         }
     }
 
-    let mut spoken_numbers: SpokenNumbers = HashMap::new();
+    fn record_number(&mut self, number: u32, turn: u32) {
+        if number < BOUNDS {
+            self.numbers_low[number as usize] = turn;
+        } else {
+            if let Some(v) = self.numbers_high.get_mut(&number) {
+                *v = turn;
+            } else {
+                self.numbers_high.insert(number, turn);
+            }
+        }
+    }
+
+    fn get_number_turn(&self, number: u32) -> Option<u32> {
+        if number < BOUNDS {
+            let turn = self.numbers_low[number as usize];
+            if turn != 0 {
+                return Some(turn);
+            } else {
+                return None;
+            }
+        } else {
+            return self.numbers_high.get(&number).copied();
+        }
+    }
+}
+
+fn calculate_nth_number(list: &[u32], n: u32) -> u32 {
+    if (n as usize) < list.len() {
+        return list[n as usize];
+    }
+
+    let mut recorder = NumberRecorder::new();
 
     for (turn, number) in list[..list.len() - 1].iter().enumerate() {
-        record_number(&mut spoken_numbers, *number, turn + 1);
-        // println!("{:4}: {}", turn, *number);
+        recorder.record_number(*number, (turn + 1) as u32);
     }
 
     let mut current_number = list.last().copied().unwrap();
 
-    for turn in list.len().. {
+    for turn in list.len() as u32.. {
         if turn == n {
             return current_number;
         }
 
-        let v = spoken_numbers.get(&current_number).copied();
-        record_number(&mut spoken_numbers, current_number, turn);
+        let v = recorder.get_number_turn(current_number);
+        recorder.record_number(current_number, turn as u32);
 
         if v.is_some() {
-            current_number = turn - v.unwrap();
+            current_number = turn as u32 - v.unwrap();
         } else {
             current_number = 0;
         }
-        // println!("{:4}: {}", turn, last_spoken_number);
     }
 
     0
@@ -66,31 +99,49 @@ mod test {
     use super::*;
 
     #[test]
-    fn day_15_calculate_nth_number() {
+    fn day_15_calculate_nth_number_01() {
         let list = parse_input("0,3,6");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(436, result);
+    }
 
+    #[test]
+    fn day_15_calculate_nth_number_02() {
         let list = parse_input("1,3,2");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(1, result);
+    }
 
+    #[test]
+    fn day_15_calculate_nth_number_03() {
         let list = parse_input("2,1,3");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(10, result);
+    }
 
+    #[test]
+    fn day_15_calculate_nth_number_04() {
         let list = parse_input("1,2,3");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(27, result);
+    }
 
+    #[test]
+    fn day_15_calculate_nth_number_05() {
         let list = parse_input("2,3,1");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(78, result);
+    }
 
+    #[test]
+    fn day_15_calculate_nth_number_06() {
         let list = parse_input("3,2,1");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(438, result);
+    }
 
+    #[test]
+    fn day_15_calculate_nth_number_07() {
         let list = parse_input("3,1,2");
         let result = calculate_nth_number(&list, 2020);
         assert_eq!(1836, result);

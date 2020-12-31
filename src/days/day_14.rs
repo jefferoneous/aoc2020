@@ -1,8 +1,9 @@
+use lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref PARSE_MEM_REGEX: Regex =
         Regex::new(r"mem\[(?P<address>\d+)\] *= *(?P<value>\d+)").unwrap();
 }
