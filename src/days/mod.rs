@@ -17,6 +17,7 @@ mod day_13;
 mod day_14;
 mod day_15;
 mod day_16;
+mod day_17;
 
 use lazy_static;
 
@@ -38,6 +39,7 @@ lazy_static::lazy_static! {
         (day_14::part_one, day_14::part_two),
         (day_15::part_one, day_15::part_two),
         (day_16::part_one, day_16::part_two),
+        (day_17::part_one, day_17::part_two),
     ];
 }
 
