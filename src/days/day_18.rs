@@ -3,12 +3,13 @@ use std::slice::Iter;
 use std::str::Chars;
 
 pub fn part_one(data: &[&str]) {
-    let sum: i64 = data.iter().map(|s| evaluate(s)).sum();
+    let sum: i64 = data.iter().map(|s| evaluate(s, false)).sum();
     println!("Sum: {}", sum);
 }
 
-pub fn part_two(_data: &[&str]) {
-    todo!("do something and print the result");
+pub fn part_two(data: &[&str]) {
+    let sum: i64 = data.iter().map(|s| evaluate(s, true)).sum();
+    println!("Sum: {}", sum);
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -23,10 +24,6 @@ enum Token {
 enum Operation {
     Add,
     Multiply,
-}
-
-enum State {
-    ReadingNumber,
 }
 
 fn parse(expression: &str) -> Vec<Token> {
@@ -81,25 +78,39 @@ fn read_number(iter: &mut Peekable<Chars>) -> Token {
     Token::Number(result)
 }
 
-fn evaluate(expression: &str) -> i64 {
+fn evaluate(expression: &str, use_precedence: bool) -> i64 {
     let tokens = parse(expression);
     let mut iter = &mut tokens[..].iter().peekable();
-    process(&mut iter)
+    process(&mut iter, use_precedence, false)
 }
 
-fn process(iter: &mut Peekable<Iter<Token>>) -> i64 {
+fn process(iter: &mut Peekable<Iter<Token>>, use_precedence: bool, has_paren: bool) -> i64 {
     let mut stack: Vec<Token> = vec![];
 
     while let Some(&token) = iter.peek() {
         match token {
             Token::OpenParen => {
+                stack.push(*token);
                 iter.next();
-                let t = Token::Number(process(iter));
+                let t = Token::Number(process(iter, use_precedence, true));
                 stack.push(t);
             }
             Token::CloseParen => {
-                iter.next();
+                if has_paren {
+                    iter.next();
+                }
                 break;
+            }
+            Token::Op(Operation::Multiply) => {
+                if use_precedence {
+                    stack.push(*token);
+                    iter.next();
+                    let t = Token::Number(process(iter, use_precedence, false));
+                    stack.push(t);
+                } else {
+                    stack.push(*token);
+                    iter.next();
+                }
             }
             _ => {
                 stack.push(*token);
@@ -211,27 +222,46 @@ mod test {
 
     #[test]
     fn day_18_evaluates_simple_expression() {
-        assert_eq!(5, evaluate("2 + 3"))
+        assert_eq!(5, evaluate("2 + 3", false))
     }
 
     #[test]
     fn day_18_evaluates_long_expression() {
-        assert_eq!(71, evaluate("1 + 2 * 3 + 4 * 5 + 6"))
+        assert_eq!(71, evaluate("1 + 2 * 3 + 4 * 5 + 6", false))
     }
 
     #[test]
     fn day_18_evaluates_long_expressions_with_parentheses() {
-        assert_eq!(26, evaluate("2 * 3 + (4 * 5)"));
-        assert_eq!(437, evaluate("5 + (8 * 3 + 9 + 3 * 4 * 3)"));
+        assert_eq!(26, evaluate("2 * 3 + (4 * 5)", false));
+        assert_eq!(437, evaluate("5 + (8 * 3 + 9 + 3 * 4 * 3)", false));
     }
 
     #[test]
     fn day_18_evaluates_expressions_with_nested_parentheses() {
-        // assert_eq!(51, evaluate("1 + (2 * 3) + (4 * (5 + 6))"));
-        // assert_eq!(12240, evaluate("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"));
+        assert_eq!(51, evaluate("1 + (2 * 3) + (4 * (5 + 6))", false));
+        assert_eq!(
+            12240,
+            evaluate("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false)
+        );
         assert_eq!(
             13632,
-            evaluate("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2")
+            evaluate("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false)
+        );
+    }
+
+    #[test]
+    fn day_18_evaluates_expressions_with_precedence() {
+        // assert_eq!(231, evaluate("1 + 2 * 3 + 4 * 5 + 6", true));
+        // assert_eq!(51, evaluate("1 + (2 * 3) + (4 * (5 + 6))", true));
+        // assert_eq!(46, evaluate("2 * 3 + (4 * 5)", true));
+        // assert_eq!(1445, evaluate("5 + (8 * 3 + 9 + 3 * 4 * 3)", true));
+        // assert_eq!(
+        //     669060,
+        //     evaluate("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true)
+        // );
+        assert_eq!(
+            23340,
+            evaluate("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true)
         );
     }
 }
