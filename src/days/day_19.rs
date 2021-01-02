@@ -20,7 +20,7 @@ pub fn part_two(data: &[&str]) {
 fn parse_data<'a>(data: &'a [&'a str]) -> Result<(Rules, &'a [&'a str]), String> {
     let mut iter = data.iter().enumerate();
 
-    let mut rules = Rules::new();
+    let mut rules = Rules::new(1);
 
     while let Some((i, s)) = iter.next() {
         if !s.is_empty() {
@@ -49,7 +49,7 @@ fn parse_data_with_looping_rules<'a>(
         })
         .enumerate();
 
-    let mut rules = Rules::new();
+    let mut rules = Rules::new(5);
 
     while let Some((i, s)) = iter.next() {
         if !s.is_empty() {
@@ -106,30 +106,27 @@ impl FromStr for RuleSpec {
 
 struct Rules {
     rules: HashMap<usize, RuleSpec>,
+    depth: i32,
 }
 
 impl Rules {
-    fn new() -> Self {
+    fn new(depth: i32) -> Self {
         Self {
             rules: HashMap::new(),
+            depth,
         }
     }
 
     fn matches(&self, candidate: &str) -> bool {
-        for depth in 1..10 {
-            if let Some(rule) = self.rules.get(&0) {
-                let pattern = self.compile_rule(0, rule, depth);
+        if let Some(rule) = self.rules.get(&0) {
+            let pattern = self.compile_rule(0, rule, self.depth);
 
-                let pattern = format!("^{}$", pattern);
-                let regex = Regex::new(&pattern).unwrap();
-
-                if regex.is_match(candidate) {
-                    return true;
-                }
-            }
+            let pattern = format!("^{}$", pattern);
+            let regex = Regex::new(&pattern).unwrap();
+            regex.is_match(candidate)
+        } else {
+            false
         }
-
-        false
     }
 
     fn compile_rule(&self, id: usize, rulespec: &RuleSpec, depth: i32) -> String {
@@ -189,7 +186,7 @@ mod test {
 
     #[test]
     fn day_19_matches_simple_rule() -> Result<(), String> {
-        let mut rules = Rules::new();
+        let mut rules = Rules::new(1);
         rules.add_rule("0: \"a\"")?;
         let message = "a";
 
@@ -200,7 +197,7 @@ mod test {
 
     #[test]
     fn day_19_does_not_match_simple_rule() -> Result<(), String> {
-        let mut rules = Rules::new();
+        let mut rules = Rules::new(1);
         rules.add_rule("0: \"a\"")?;
         let message = "bb";
 
@@ -211,7 +208,7 @@ mod test {
 
     #[test]
     fn day_19_matches_compound_rule() -> Result<(), String> {
-        let mut rules = Rules::new();
+        let mut rules = Rules::new(1);
         rules.add_rule("0: 1 2")?;
         rules.add_rule("1: \"a\"")?;
         rules.add_rule("2: \"b\"")?;
@@ -224,7 +221,7 @@ mod test {
 
     #[test]
     fn day_19_matches_or_rule() -> Result<(), String> {
-        let mut rules = Rules::new();
+        let mut rules = Rules::new(1);
         rules.add_rule("0: 1 2 | 3 4")?;
         rules.add_rule("1: \"a\"")?;
         rules.add_rule("2: \"b\"")?;
@@ -267,8 +264,8 @@ mod test {
             "9: 14 27 | 1 26",
             "10: 23 14 | 28 1",
             "1: \"a\"",
-            // "11: 42 31",
-            "11: 42 31 | 42 11 31",
+            "11: 42 31",
+            // "11: 42 31 | 42 11 31",
             "5: 1 14 | 15 1",
             "19: 14 1 | 14 14",
             "12: 24 14 | 19 1",
@@ -290,8 +287,8 @@ mod test {
             "21: 14 1 | 1 14",
             "25: 1 1 | 1 14",
             "22: 14 14",
-            // "8: 42",
-            "8: 42 | 42 8",
+            "8: 42",
+            // "8: 42 | 42 8",
             "26: 14 22 | 1 20",
             "18: 15 15",
             "7: 14 5 | 1 21",
@@ -314,7 +311,7 @@ mod test {
             "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba",
         ];
 
-        if let Ok((rules, messages)) = parse_data(&data) {
+        if let Ok((rules, messages)) = parse_data_with_looping_rules(&data) {
             let count = messages.iter().filter(|m| rules.matches(m)).count();
             assert_eq!(12, count);
         }
