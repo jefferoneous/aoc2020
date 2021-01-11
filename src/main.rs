@@ -47,7 +47,7 @@ fn process_args() -> u8 {
         )
         .get_matches();
 
-    let day: u8 = matches.value_of("day").unwrap_or("16").parse().unwrap();
+    let day: u8 = matches.value_of("day").unwrap_or("20").parse().unwrap();
 
     day
 }

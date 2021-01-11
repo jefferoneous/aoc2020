@@ -7,7 +7,7 @@ fn find_pair(list: &[u32], sum: u32) -> Option<(u32, u32)> {
         }
 
         if list[1..].contains(&(sum - *x)) {
-            return Some((*x, sum - x));
+            return Some((*x, sum - *x));
         }
     }
 
