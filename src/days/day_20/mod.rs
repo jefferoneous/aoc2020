@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::fmt::{Binary, Display};
 use std::num::ParseIntError;
 
 pub fn part_one(data: &[&str]) {
@@ -458,6 +459,16 @@ fn compose_image(tiles: &Tiles) -> Vec<u128> {
     result
 }
 
+fn format_image<T: Display + Binary>(image: &Vec<T>, width: usize) -> String {
+    let mut result = String::new();
+
+    for row in image {
+        result += &format!("{:0w$b}\n", row, w = width);
+    }
+
+    result
+}
+
 fn remove_sea_monsters(image: &Vec<u128>) -> Vec<u128> {
     let mut result = image.clone();
 
@@ -473,21 +484,17 @@ fn remove_sea_monsters(image: &Vec<u128>) -> Vec<u128> {
 
         let mut found_sea_monster = false;
 
-        for rotation in 0..4 {
+        for iteration in 0..4 {
             println!("Scanning image for sea monsters");
+            println!(
+                "Image: \n{}",
+                format_image(&working_image, working_image.len())
+            );
             for image_row in 0..(working_image.len() - sea_monster_mask.len()) {
-                println!("Image row {}", image_row);
                 for shift in 0..(working_image.len() - MASK_WIDTH) {
                     if sea_monster_mask
                         .iter()
                         .enumerate()
-                        // .inspect(|(i, m)| {
-                        //     println!(
-                        //         "Applying {:b} to {:b}",
-                        //         (*m << shift),
-                        //         working_image[image_row + i]
-                        //     )
-                        // })
                         .all(|(i, m)| (*m << shift) & working_image[image_row + i] == (*m << shift))
                     {
                         for (i, m) in sea_monster_mask.iter().enumerate() {
@@ -502,10 +509,10 @@ fn remove_sea_monsters(image: &Vec<u128>) -> Vec<u128> {
             if found_sea_monster {
                 return Some(working_image);
             }
-            if rotation < 3 {
+            if iteration < 3 {
                 println!(
-                    "No sea monsters found. Rotating image. Rotations: {}",
-                    rotation
+                    "Scan #{} found no sea monsters. Rotating image.",
+                    iteration + 1
                 );
                 working_image = rotate_image(working_image);
             }
@@ -531,12 +538,12 @@ fn remove_sea_monsters(image: &Vec<u128>) -> Vec<u128> {
         new_image
     }
 
-    if let Some(result) = apply_mask(&image) {
+    if let Some(result) = apply_mask(&result) {
         return result;
     } else {
         println!("No sea monsters found after 3 rotations. Flipping image and trying again.");
         result = flip_image(&result);
-        if let Some(result) = apply_mask(&image) {
+        if let Some(result) = apply_mask(&result) {
             return result;
         }
     }
