@@ -19,10 +19,10 @@ fn parse_input(data: &str) -> Vec<u32> {
 }
 
 #[cfg(not(debug_assertions))]
-const BOUNDS: u32 = 3 * 512 * 1024;
+const BOUNDS: u32 = 512 * 1024;
 
 #[cfg(debug_assertions)]
-const BOUNDS: u32 = 512 * 1024;
+const BOUNDS: u32 = 128 * 1024;
 
 struct NumberRecorder {
     numbers_low: [u32; BOUNDS as usize],
